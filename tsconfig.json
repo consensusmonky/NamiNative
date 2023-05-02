@@ -1,0 +1,16 @@
+{
+  "extends": "@tsconfig/react-native/tsconfig.json",
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "commonjs",
+    "declaration": true,
+    "declarationDir": "./dist",
+    "outDir": "./dist",
+    "esModuleInterop": true,
+    "typeRoots": ["node_modules/@types"],
+    "paths": {
+      "@env": ["./@env"] // this mapping is relative to "baseUrl"
+    }
+  },
+  "allowSyntheticDefaultImports": true
+}
