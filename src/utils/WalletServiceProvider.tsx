@@ -1,5 +1,5 @@
 import { BaseAddress, Bip32PrivateKey, decrypt_with_password, encrypt_with_password, NetworkInfo, PrivateKey, RewardAddress, StakeCredential } from "@emurgo/react-native-haskell-shelley";
-import { mnemonicToEntropy } from "@mfellner/react-native-bip39";
+import { mnemonicToEntropy } from '@mfellner/react-native-bip39';
 // import { mnemonicFromObject } from "../screens/SeedGeneratorScreen";
 import { generateSecureRandom } from "react-native-securerandom";
 import { Buffer } from "buffer";
@@ -31,13 +31,13 @@ export const WalletService : WalletServiceProvider = {
         }) as string;
 
         // await AsyncStorage.setItem(STORAGE.encryptedKey, encryptedRootKey);
-        Wallet.set(STORAGE.encryptedKey, encryptedRootKey);
+        Wallet.setString(STORAGE.encryptedKey, encryptedRootKey);
 
         // await AsyncStorage.removeItem(STORAGE.network);
         // await AsyncStorage.removeItem(STORAGE.currency);
 
-        Wallet.delete(STORAGE.network);
-        Wallet.delete(STORAGE.currency);
+        Wallet.removeItem(STORAGE.network);
+        Wallet.removeItem(STORAGE.currency);
         // await AsyncStorage.setItem(STORAGE.network, `{id: "${NETWORK_ID.testnet}", node: "${NODE.testnet}" }`);
         var networkConfig: Network = 
         {
@@ -51,8 +51,8 @@ export const WalletService : WalletServiceProvider = {
 
         // AsyncStorage.setItem(STORAGE.network, JSON.stringify(networkConfig));
         // await AsyncStorage.setItem(STORAGE.currency, "usd");
-        Wallet.set(STORAGE.network, JSON.stringify(networkConfig));
-        Wallet.set(STORAGE.currency, "usd");
+        Wallet.setMap(STORAGE.network, networkConfig);
+        Wallet.setString(STORAGE.currency, "usd");
     },
 
     async createAccount(name: string, password: string, accountIndex: number | null = null): Promise<void> {
@@ -152,7 +152,7 @@ export const WalletService : WalletServiceProvider = {
         
         var serializedAccount = JSON.stringify(newAccount)        
         // await AsyncStorage.setItem(STORAGE.accounts, serializedAccount);
-        Wallet.set(STORAGE.accounts, serializedAccount);
+        Wallet.setMap(STORAGE.accounts, newAccount);
 
         //  const finalEncryptedRootKey = existingWallet ?? encryptedRootKey;
         
@@ -224,7 +224,7 @@ export const generatePrivateKey = async (mnemonic: string): Promise<Bip32Private
     
 export const encryptWithPassword = async (password: string, rootKeyBytes: ArrayBuffer): Promise<string> => {
     let rootKeyHex = Buffer.from(rootKeyBytes).toString('hex');
-    let passwordHex = password != "" ? Buffer.from(password).toString('hex') : new Uint8Array().toString('hex');
+    let passwordHex = password != "" ? Buffer.from(password).toString('hex') : new Uint8Array().toString();
 
     rootKeyBytes = Buffer.from("");
 

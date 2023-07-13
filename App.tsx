@@ -6,13 +6,16 @@
  */
 
 import * as encoding from 'text-encoding'
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import type {PropsWithChildren} from 'react';
 import { ThemeContext } from "@react-native-material/core";
-
+import { ErrorResponse, JsonRpcResponse } from "@walletconnect/jsonrpc-utils";
 import { IconButton } from 'react-native-paper';
+import { Buffer } from "buffer";
 
 import {
+  BackHandler,
+  Linking,
   Platform,
   SafeAreaView,
   ScrollView,
@@ -33,7 +36,6 @@ import {
 import { SignClient } from '@walletconnect/sign-client';
 import { Core } from "@walletconnect/core";
 import { Web3Wallet } from "@walletconnect/web3wallet";
-import useInitialization from './src/hooks/useInitialization';
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { HomeScreen } from './src/screens/HomeScreen';
@@ -51,28 +53,36 @@ import { AccountInfoReducer } from './src/hooks/reducers/AccountInfoReducer';
 import BackgroundFetch from 'react-native-background-fetch';
 import PushNotification, { Importance } from 'react-native-push-notification';
 import { makeStyles } from './style';
-
+import useInitialization, { web3wallet } from './src/utils/Web3WalletClient';
+import { SignClientTypes, SessionTypes } from "@walletconnect/types";
+import PairingModal from './src/screens/PairingModal/PairingModal';
+import { getCurrentAccount, getNetwork, getUtxos } from './src/services/NetworkDataProviderService';
+import { Address, hash_transaction, Transaction, TransactionBody, TransactionUnspentOutput, TransactionWitnessSet } from '@emurgo/react-native-haskell-shelley';
+import { APIError, ERROR, NETWORK_ID, TxSendError } from './src/config/config';
+import { blockfrostRequest } from './src/utils/ApiExtensions';
+import { signTx } from './src/utils/Ledger';
+import SigningModal from './src/screens/SigningModal/SigningModal';
 // import { AuthClient } from "@walletconnect/auth-client";
 
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
 
-const core = new Core({
-  projectId: "797985400e1ea10a2b80ca90c3bcfd48",
-});
+// const core = new Core({
+//   projectId: "472ead5d9fdcac0cafb1949a2841111e",
+// });
 
-const metadata = {
-  name: "Example Dapp",
-  description: "Example Dapp",
-  url: "#",
-  icons: ["https://walletconnect.com/walletconnect-logo.png"],
-};
+// const metadata = {
+//   name: "Example Dapp",
+//   description: "Example Dapp",
+//   url: "#",
+//   icons: ["https://walletconnect.com/walletconnect-logo.png"],
+// };
 
 // function Section({children, title}: SectionProps): JSX.Element {
   
   
-//   const initialized = useInitialization();
+ 
 
 
   
@@ -134,14 +144,16 @@ function App(): JSX.Element {
 
   const isDarkMode = useColorScheme() === 'dark';
   const styles = makeStyles(isDarkMode);
-  
-
+  const existingWallet = getCurrentAccount();
+  let network = getNetwork();
+  const initialized = useInitialization();
 
 
   useEffect(() => {
-
-  }, []);
-
+    console.log('App Initalized: ', initialized);
+  }, [initialized]);
+  
+  
   const [visible, setVisible] = useState(false);
 
   // useEffect(() => {
@@ -183,6 +195,7 @@ function App(): JSX.Element {
   //       return state;
   //   }
   // };
+
 
 
 const mainReducer = ({ initialLoadingReducer, accountInfoReducer  }: any, action: any) => {
@@ -228,10 +241,6 @@ const mainReducer = ({ initialLoadingReducer, accountInfoReducer  }: any, action
   
 // });
 
-
-
-  
-  
   return (
     /*</>
     // <NavigationContainer>
@@ -250,7 +259,7 @@ const mainReducer = ({ initialLoadingReducer, accountInfoReducer  }: any, action
     // </NavigationContainer>
     */
     <>    
-    <StateProvider initialState={initialState} reducer={mainReducer}>
+    <StateProvider initialState={initialState} reducer={mainReducer} >
       <LayoutNew />
     </StateProvider>
     </>

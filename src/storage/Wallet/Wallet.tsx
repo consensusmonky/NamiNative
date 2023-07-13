@@ -1,3 +1,3 @@
-import { MMKV } from "react-native-mmkv";
+import { MMKVLoader } from "react-native-mmkv-storage";
 
-export const Wallet = new MMKV();
+export const Wallet = new MMKVLoader().withEncryption().initialize();;

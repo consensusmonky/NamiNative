@@ -26,18 +26,18 @@ const QrCode = ({ value }: {value: string}) => {
             }}
             outerEyesOptions={{
                 topLeft: {
-                borderRadius: [20, 20, 0, 20],
+                borderRadius: [15, 15, 0, 15],
                 },
                 topRight: {
-                borderRadius: [20, 20, 20],
+                borderRadius: [15, 15, 15],
                 },
                 bottomLeft: {
-                borderRadius: [20, 0, 20, 20],
+                borderRadius: [15, 0, 15, 15],
                 },
             }}
             innerEyesOptions={{
-                borderRadius: 12,
-                scale: 0.85,
+                borderRadius: 1,
+                scale: 0.95,
             }}
             />
             :

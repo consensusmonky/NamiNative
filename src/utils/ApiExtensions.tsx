@@ -16,12 +16,13 @@ export function getInitalNetwork(): Network {
       previewSubmit: ""
     }
     let networkSerialized = JSON.stringify(network);
-    if (Wallet.contains(STORAGE.network))
+    let setNetwork: Network;
+    // if (Wallet.getString(STORAGE.network)) TODO?
     {
-      networkSerialized = Wallet.getString(STORAGE.network) as string;
+      setNetwork = Wallet.getMap<Network>(STORAGE.network);
     }   
 
-    return JSON.parse(networkSerialized) as Network
+    return setNetwork
 };
 
 export const setNetwork = async (network: Network) => {
@@ -61,7 +62,7 @@ export const setNetwork = async (network: Network) => {
         }    
 
     // AsyncStorage.setItem(STORAGE.network, JSON.stringify(networkConfig))
-    Wallet.set(STORAGE.network, JSON.stringify(networkConfig));
+    Wallet.setMap(STORAGE.network, networkConfig);
 
     return true;
 };

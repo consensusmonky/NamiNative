@@ -1,5 +1,5 @@
 // import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ListItem, Stack } from '@react-native-material/core';
+import {  Stack } from '@react-native-material/core';
 import { Buffer } from "buffer";
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 // @ts-expect-error
@@ -40,11 +40,12 @@ import { dateFromUnix } from '../utils/Common';
 import { Wallet } from '../storage/Wallet';
 import { makeStyles } from '../../style';
 import { useNetInfo } from '@react-native-community/netinfo';
+import QrScannerScreen from './QrScannerScreen/QrScannerScreen';
 
 export const HomeScreen = ({navigation, route}: any) => {
-
   const isDarkMode = useColorScheme() === 'dark';
   const styles = makeStyles(isDarkMode);
+  
   // const netInfo = useNetInfo();
   
   // const isDarkMode = useColorScheme() === 'dark';
@@ -136,6 +137,9 @@ export const HomeScreen = ({navigation, route}: any) => {
   //   }
   // });
 
+
+  const [isScannerVisible, setIsScannerVisible] = useState(false);
+
   async function updateTransactions(initialUpdate: boolean = false) {
     
     const network = await getNetwork();
@@ -221,6 +225,8 @@ export const HomeScreen = ({navigation, route}: any) => {
     return Promise.resolve(trans);
 }
 
+
+  
 
   const [transactions, setTransactions] = useState([] as Array<{
         id: string,
@@ -334,7 +340,6 @@ export const HomeScreen = ({navigation, route}: any) => {
   const connectionStatePrev = usePrevious(initialLoadingReducer.status.offlineMessage.visible);
   useEffect(() => {
       if (connectionStatePrev != initialLoadingReducer.status.offlineMessage.visible && connectionStatePrev) {
-        console.log("WECHSERL");
         onRefresh(false);
       }
       return () => { 
@@ -481,10 +486,44 @@ export const HomeScreen = ({navigation, route}: any) => {
       return Promise.resolve(true)
   };
 
+  const hideScanner = () => {
+    setIsScannerVisible(false);
+  }
+
+  const showScanner = () => {
+    setIsScannerVisible(true);
+  }
+
    const showWalletScreen = useMemo(() => {   
     return (
       <SafeAreaView> 
-      <ScrollView horizontal={false} showsVerticalScrollIndicator={true} style={{flex: 1, zIndex: 100}} 
+        { isScannerVisible ? 
+                <View style={[{ position: 'absolute', flex: 1, zIndex: 10,  alignItems: 'center', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: Colors.darker}]}>
+                  <View style={[{position: 'relative', borderRadius: 6}]}>
+                      <QrScannerScreen hideScanner={hideScanner} navigation={navigation} />
+                    </View>
+                </View>
+                 : null
+              }
+              { walletIsAvailable ?
+                <TouchableOpacity
+                // style={styles.buttons}
+                // onPress={() => {navigation.navigate('SeedGenerator', {restoreWallet: true})}}
+                style={[styles.addButton, styles.button, styles.buttonOpen, {borderRadius: 64, borderWidth: 6, backgroundColor: Colors.lighter}, {borderColor: isDarkMode ? Colors.lighter : Colors.light}, {shadowColor: '#000', shadowOffset: {width: -30, height: 55}, shadowRadius: 128, elevation: 10, zIndex: 5}]}
+                        onPress={() => {!initialLoadingReducer.status.offlineMessage.visible && navigation.navigate('CreateTransaction', {});}}
+                  >
+                {/* <Text style={[isDarkMode ? {color: Colors.darker} : {color: Colors.darker}, {zIndex: 10}]}>+</Text> */}
+                <IconButton icon="cube-send" style={{backgroundColor: isDarkMode ? Colors.lighter : Colors.lighter}} />
+                </TouchableOpacity>
+                  // <Pressable
+                  //       style={[styles.addButton, styles.button, styles.buttonOpen, {borderRadius: 64}]}
+                  //       onPress={() => {!initialLoadingReducer.status.offlineMessage.visible && navigation.navigate('CreateTransaction', {});}}>
+                  //         <Text>+</Text>
+                  //   </Pressable>
+                    :
+                    <></>
+                  }
+      <ScrollView horizontal={false} showsVerticalScrollIndicator={true} style={{flex: 1, zIndex: 20}} 
         refreshControl={
           <RefreshControl
             refreshing={isLoading}
@@ -529,7 +568,6 @@ export const HomeScreen = ({navigation, route}: any) => {
               /> */}
               {/* {getAvatarElement()} */}
               {/* <Image source={{uri: getAvatar(), scale: 1}} style={{height: 30, width: 30}}/> */}
-             
               
               <View style={[isDarkMode ? {backgroundColor: '#323232'} : {backgroundColor: '#ddd' }, styles.container, {marginTop: 8, borderRadius: 16, flexDirection: 'column'}]}>
                 <View style={{alignItems: 'center'}}>
@@ -540,21 +578,33 @@ export const HomeScreen = ({navigation, route}: any) => {
                 </View>
                 <View style={[isDarkMode ? {backgroundColor: '#ccc'} : {backgroundColor: '#fff'}, {borderRadius: 16, margin: 8}]}>
                 {address ? 
-                  <QrCode value={address}></QrCode>
+                  <TouchableOpacity  style={{flexDirection: 'row', marginHorizontal: 26}} onPress={copyAddress.bind(this, address)}>
+                    <QrCode value={address}></QrCode>
+                  </TouchableOpacity>
                   :
-                  <Text>{address}</Text>
+                  <TouchableOpacity  style={{flexDirection: 'row', marginHorizontal: 26}} onPress={copyAddress.bind(this, address)}>
+                    <Text>{address}</Text>
+                  </TouchableOpacity>
                  }
                 </View>
-                
-                <TouchableOpacity  style={{flexDirection: 'row', marginHorizontal: 26}} onPress={copyAddress.bind(this, address)}>
+                <View>
+                <TouchableOpacity
+                  style={styles.buttons}
+                  onPress={showScanner}
+                >                
+                  <Text style={isDarkMode ? {color: Colors.lighter} : {color: Colors.darker}}>Scan QR</Text>
+                </TouchableOpacity>
+                 
+                </View>
+                {/* <TouchableOpacity  style={{flexDirection: 'row', marginHorizontal: 26}} onPress={copyAddress.bind(this, address)}>
                   <Text style={{alignSelf: 'stretch'}}>{address}</Text>
                   <IconButton size={12} icon="content-copy" style={[{backgroundColor: isDarkMode ? Colors.lighter : Colors.lighter}]} />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
                 {
                   __DEV__ ?
                 <TouchableOpacity
                   style={styles.buttons}
-                  onPress={() => {Wallet.clearAll(); setTransactions([]); reloadScreen(); }}
+                  onPress={() => { Wallet.clearMemoryCache(); Wallet.clearStore(); setTransactions([]); reloadScreen(); }}
                 >
                 
                   <Text style={isDarkMode ? {color: '#ff4455'} : {color: Colors.red}}>delete</Text>
@@ -573,7 +623,7 @@ export const HomeScreen = ({navigation, route}: any) => {
             </ScrollView>
               </SafeAreaView>
     )
-  }, [isLoading, avatar, balance, address, accountName, isDarkMode,] );
+  }, [isLoading, avatar, balance, address, accountName, isDarkMode, isScannerVisible] );
 
   const checkWallet = async(initialWallet = false) => {      
     var existingWallet = getCurrentAccount(); //JSON.parse(((await AsyncStorage.getItem(STORAGE.accounts)) as string)) as AccountSetting;
@@ -587,7 +637,7 @@ export const HomeScreen = ({navigation, route}: any) => {
         setIsLoading(false);
       return;
     }
-    console.log("HAHAHAHHA")
+  
     // var test = await AsyncStorage.getItem(STORAGE.network) as string;
     
     let network = await getNetwork();
@@ -663,25 +713,7 @@ export const HomeScreen = ({navigation, route}: any) => {
     <View style={[{paddingTop: 22, flexDirection: 'column', flex: 1}]}>
       <View style={{zIndex: 10}}>
         <Toast />
-      </View>
-      { walletIsAvailable ?
-      <TouchableOpacity
-      // style={styles.buttons}
-      // onPress={() => {navigation.navigate('SeedGenerator', {restoreWallet: true})}}
-      style={[styles.addButton, styles.button, styles.buttonOpen, {borderRadius: 64, borderWidth: 6, backgroundColor: Colors.lighter}, {borderColor: isDarkMode ? Colors.lighter : Colors.light}, {shadowColor: '#000', shadowOffset: {width: -30, height: 55}, shadowRadius: 128, elevation: 10}]}
-              onPress={() => {!initialLoadingReducer.status.offlineMessage.visible && navigation.navigate('CreateTransaction', {});}}
-        >
-      {/* <Text style={[isDarkMode ? {color: Colors.darker} : {color: Colors.darker}, {zIndex: 10}]}>+</Text> */}
-      <IconButton icon="cube-send" style={{backgroundColor: isDarkMode ? Colors.lighter : Colors.lighter}} />
-      </TouchableOpacity>
-        // <Pressable
-        //       style={[styles.addButton, styles.button, styles.buttonOpen, {borderRadius: 64}]}
-        //       onPress={() => {!initialLoadingReducer.status.offlineMessage.visible && navigation.navigate('CreateTransaction', {});}}>
-        //         <Text>+</Text>
-        //   </Pressable>
-          :
-          <></>
-        }
+      </View>      
 
         <Stack fill center spacing={4}>
               {/* <Pressable

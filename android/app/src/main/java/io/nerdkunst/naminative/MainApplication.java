@@ -1,4 +1,4 @@
-package com.naminative;
+package io.nerdkunst.naminative;
 
 import android.app.Application;
 import com.facebook.react.PackageList;
@@ -9,9 +9,6 @@ import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactNativeHost;
 import com.facebook.soloader.SoLoader;
 import java.util.List;
-
-import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;  // <--- Import Package
-import com.asterinet.react.bgactions.BackgroundActionsPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 

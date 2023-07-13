@@ -50,8 +50,7 @@ export const makeStyles = (isDarkMode: boolean) => StyleSheet.create({
     buttonClose: {
       backgroundColor: '#61DDBC',
     },
-    addButton: {
-      alignSelf: 'flex-end',
+    addButton: {      
       position: 'absolute',
       borderRadius: 50,
       backgroundColor: '#61DDBC',
@@ -62,7 +61,6 @@ export const makeStyles = (isDarkMode: boolean) => StyleSheet.create({
       height: 64,
       right: 35,
       bottom: 35,
-      zIndex: 10
     },
     textStyle: {
       color: 'white',

@@ -276,12 +276,12 @@ export const submitTx = async (tx: any) => {
   };
 
   export const setTxDetail = (txHash: string, txDetail: any) => {
-    if (!Wallet.contains(STORAGE.accounts))
+    if (!Wallet.getMap<AccountInfo>(STORAGE.accounts))
     {
       return;
     }
 
-    const account =  JSON.parse(Wallet.getString(STORAGE.accounts) as string) as AccountInfo;
+    const account =  Wallet.getMap<AccountInfo>(STORAGE.accounts);
     // const currentIndex = await getCurrentAccountIndex();
     // const network = await getNetwork();
     // const accounts = await JSON.parse(((await AsyncStorage.getItem(STORAGE.accounts)) as string)) as AccountSetting;
@@ -298,7 +298,7 @@ export const submitTx = async (tx: any) => {
       
       var serializedAccount = JSON.stringify(account)        
       // await AsyncStorage.setItem(STORAGE.accounts, serializedAccount);
-      Wallet.set(STORAGE.accounts, serializedAccount);
+      Wallet.setMap(STORAGE.accounts, account);
       // delete txObject[txHash];
     // }
     return account;
@@ -499,12 +499,12 @@ export const submitTx = async (tx: any) => {
 
   /** Returns account with network specific settings (e.g. address, reward address, etc.) */
   export const getCurrentAccount: () => AccountInfo | undefined = () => {
-    if (!Wallet.contains(STORAGE.accounts)) {
+    if (!Wallet.getMap<AccountInfo>(STORAGE.accounts)) {
       return;
     }
     
     //  const accounts = JSON.parse(await AsyncStorage.getItem(STORAGE.accounts) as string) as AccountSetting;
-    const account = JSON.parse(Wallet.getString(STORAGE.accounts) as string) as AccountInfo;
+    const account = Wallet.getMap<AccountInfo>(STORAGE.accounts);
     const network = getNetwork();
     
   return account ? accountToNetworkSpecific(account as AccountInfo, network) : undefined;

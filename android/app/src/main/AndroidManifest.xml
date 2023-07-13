@@ -1,10 +1,12 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.naminative">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="io.nerdkunst.naminative">
  
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    
 
     <application
       android:name=".MainApplication"
@@ -21,10 +23,18 @@
         android:launchMode="singleTask"
         android:windowSoftInputMode="adjustResize"
         android:exported="true">
+
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
+        <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE"/> 
+        <data android:scheme="naminative" />
+        <data android:scheme="wc" />
+    </intent-filter>
       </activity>
       <service android:name="com.asterinet.react.bgactions.RNBackgroundActionsTask" />
 

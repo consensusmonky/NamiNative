@@ -1,4 +1,4 @@
-package com.naminative;
+package io.nerdkunst.naminative;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;

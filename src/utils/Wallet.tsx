@@ -141,7 +141,7 @@ export const initTx = async () => {
     const currentIndex = getCurrentAccountIndex();
 
     // const accounts = await JSON.parse(((await AsyncStorage.getItem(STORAGE.accounts)) as string)) as AccountSetting;
-    const account =  existingAccount ?? JSON.parse(Wallet.getString(STORAGE.accounts) as string) as AccountInfo;
+    const account =  existingAccount ?? Wallet.getMap<AccountInfo>(STORAGE.accounts);
     
     // const account = getCurrentAccount() as Account;
     // const currentAccount = accounts[currentIndex] as Account;
@@ -167,7 +167,7 @@ export const initTx = async () => {
         // first initilization of account
         (account[network.id] as NetworkDefaultStats).lovelace = '0';
         var serializedAccount = JSON.stringify(account);
-        Wallet.set(STORAGE.accounts, serializedAccount);
+        Wallet.setMap(STORAGE.accounts, account);
         
         // await AsyncStorage.setItem(STORAGE.accounts, serializedAccount);
       }
@@ -186,7 +186,7 @@ export const initTx = async () => {
     (account[network.id] as NetworkDefaultStats).lastUpdate = account[network.id]?.history?.confirmed[0];
     var serializedAccount = JSON.stringify(account)        
     
-    Wallet.set(STORAGE.accounts, serializedAccount);
+    Wallet.setMap(STORAGE.accounts, account);
     // await AsyncStorage.setItem(STORAGE.accounts, serializedAccount);
     
     return account as AccountInfo;
@@ -224,7 +224,7 @@ export const initTx = async () => {
     var serializedAccount = JSON.stringify(account)       
 
     // await AsyncStorage.setItem(STORAGE.accounts, serializedAccount);
-    Wallet.set(STORAGE.accounts, serializedAccount);
+    Wallet.setMap(STORAGE.accounts, account);
   };
   
   export const setCollateral = async (collateral: any) => {
@@ -235,7 +235,7 @@ export const initTx = async () => {
     var serializedAccount = JSON.stringify(account)        
 
     // await AsyncStorage.setItem(STORAGE.accounts, serializedAccount);
-    Wallet.set(STORAGE.accounts, serializedAccount);
+    Wallet.setMap(STORAGE.accounts, account);
   };
   
   export const removeCollateral = async () => {
@@ -247,5 +247,5 @@ export const initTx = async () => {
     var serializedAccount = JSON.stringify(account)        
 
     // await AsyncStorage.setItem(STORAGE.accounts, serializedAccount);
-    Wallet.set(STORAGE.accounts, serializedAccount);
+    Wallet.setMap(STORAGE.accounts, account);
   };

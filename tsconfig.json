@@ -7,7 +7,7 @@
     "declarationDir": "./dist",
     "outDir": "./dist",
     "esModuleInterop": true,
-    "typeRoots": ["node_modules/@types"],
+    "typeRoots": ["./node_modules/@types"],
     "paths": {
       "@env": ["./@env"] // this mapping is relative to "baseUrl"
     }

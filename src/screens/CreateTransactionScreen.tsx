@@ -1,5 +1,5 @@
 import { Buffer } from "buffer";
-import { useCallback, useEffect, useState } from 'react';
+import { createRef, useCallback, useEffect, useRef, useState } from 'react';
 import "@mfellner/react-native-fast-create-hash"
 import {
   ActivityIndicator,  
@@ -62,10 +62,26 @@ export const CreateTransactionScreen = ({navigation, route}: any) => {
   let timer: any;  
     
   const [password, setPassword] = React.useState("");
+  const inputElement = useRef<TextInput>({} as TextInput);
 
   React.useEffect(() => {
-    resetState();
-    init();
+        
+    const ini = async () => {
+      await resetState();
+      await init();
+      setAddress({...address, display: route.params.walletAddress, result: route.params.walletAddress});
+      if (route.params.walletAddress) {
+        inputElement.current?.setNativeProps({
+          selection: {
+              start: 0,
+              end: 0
+          }
+      });
+        inputElement.current?.focus();
+      }
+    }
+    ini();
+    
     return () => {
         resetState();
     };
@@ -997,6 +1013,7 @@ const changeAmount = (newAmount: string) => {
         <TextInput
           editable={utxos?.current.length > 0 && address.display !== "" && !address.error}
           style={styles.input}
+          ref={inputElement}
           onChangeText={async (val: string) => {
             if (utxos.current.length == 0 || !address) {
                 return;

@@ -15,3 +15,11 @@ module.exports = {
     }),
   },
 };
+
+
+  // resolver: {
+  //   blacklistRE: exclusionList([
+  //     new RegExp("^C:\/dev\/git\/NamiNative\\/.git\\/.*$"),
+  //     // ...
+  //   ])
+  // }
