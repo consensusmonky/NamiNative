@@ -346,6 +346,8 @@ export const submitTx = async (tx: any) => {
       (currentAccount[currentNetwork.id] as NetworkDefaultStats).assets = [];
       (currentAccount[currentNetwork.id] as NetworkDefaultStats).minAda = "0";
     }
+
+    Wallet.setMap(STORAGE.accounts, currentAccount);
     
     return true;
   };

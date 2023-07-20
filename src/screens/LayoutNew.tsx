@@ -1,7 +1,7 @@
 import { DefaultTheme, NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Alert, BackHandler, Image, Linking, Modal, SafeAreaView, Text, TextInput, TouchableOpacity, useColorScheme, View } from "react-native";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { ActivityIndicator, Alert, AppState, BackHandler, EmitterSubscription, Image, Linking, Modal, SafeAreaView, Text, TextInput, TouchableOpacity, useColorScheme, View } from "react-native";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 import AvatarBox from "../components/AvatarBox";
 import { useStateValue } from "../hooks/StateProvider";
@@ -12,7 +12,7 @@ import { SeedGeneratorScreen } from "./SeedGeneratorScreen";
 import { SuccessWalletCreatedScreen } from "./SuccessWalletCreatedScreen";
 import { makeStyles } from "../../style";
 import NetInfo, { useNetInfo } from "@react-native-community/netinfo";
-import { web3wallet } from "../utils/Web3WalletClient";
+import { core, createWeb3Wallet, web3wallet } from "../utils/Web3WalletClient";
 import { APIError, ERROR, NETWORK_ID, TxSendError } from "../config/config";
 import { getCurrentAccount, getNetwork, getUtxos, isValidAddress } from "../services/NetworkDataProviderService";
 import { blockfrostRequest } from "../utils/ApiExtensions";
@@ -27,7 +27,10 @@ import { getSdkError } from "@walletconnect/utils";
 import React from "react";
 import { requestAccountKey } from "../utils/WalletServiceProvider";
 import Toast from "react-native-toast-message";
-
+import { split } from "lodash";
+import EventEmmiter, { EventEmitter } from "events";
+import { Web3Wallet } from "@walletconnect/web3wallet";
+import { AccountInfo } from "../types/Network";
 
 export const LayoutNew = () => {
   const netInfo = useNetInfo();
@@ -36,7 +39,10 @@ export const LayoutNew = () => {
   const isDarkMode = useColorScheme() === 'dark';
   const styles = makeStyles(isDarkMode);
   const [{ initialLoadingReducer }, dispatch] = useStateValue();
-
+  const appState = useRef(AppState.currentState);
+  const [isInitialized, setIsInitialized] = useState(false);
+  
+  const [walletConnectDeepLinkEvent, setWalletConnectDeepLinkEvent] = useState<EmitterSubscription | undefined>(undefined);
   const unsubscribe = NetInfo.addEventListener(state => {
     if (state.isConnected == initialLoadingReducer.status.offlineMessage.visible) {
       // if (!initialLoadingReducer.status.offlineMessage.visible) {
@@ -67,14 +73,13 @@ export const LayoutNew = () => {
     },
     []
   );
-  const existingWallet = getCurrentAccount();
-  let network = getNetwork();
+
   const [modalVisible, setModalVisible] = useState(false);
   const [savedPasswordTimeoutId,setSavedPasswordTimeoutId] = useState({} as NodeJS.Timeout);
   const [signingModalVisible, setSigningModalVisible] = useState(false);
   const [passwordModalVisible, setPasswordModalVisible] = useState(false);
   const [successfulSession, setSuccessfulSession] = useState(false);
-
+  // const [existingWallet, setExistingWallet] = useState<AccountInfo | undefined>(undefined);
   const [currentWCURI, setCurrentWCURI] = useState("");
   const [password, setPassword] = useState("");
   const [validPassword, setValidPassword] = useState(false);
@@ -84,91 +89,154 @@ export const LayoutNew = () => {
   const [requestSession, setRequestSession] = useState({} as any);
   const [requestEvent, setRequestEvent] = useState({} as SignClientTypes.EventArguments["session_request"] | undefined);
   const [url, setUrl] = useState("");
-
-  const openDeepLink = (urlPara = "") => {
+  
+  
+  const openDeepLink = useCallback((urlPara = "") => {
     urlPara = urlPara != "" ? urlPara : url;
+    console.log(urlPara);
     if (!urlPara) {
       return;
     }
-    Linking.canOpenURL(urlPara!).then(async (supported) => {      
-      if (supported) {
-        
-        // event.url = ""
-        
-        // Object.values(web3wallet.getActiveSessions()).map(async (session: any) => console.log(await session.topic))
-        var activeSessions = await web3wallet?.getActiveSessions();
-        
-        // console.log(activeSessions);
-        if (activeSessions) {
-          Object.keys(activeSessions).map(async (topic: string) => {
-            console.log("Session: ")
-            console.log(topic)
-            // await web3wallet.disconnectSession({
-            //   topic: topic,
-            //   reason: {code: 0,  message: "USER DISCONNECTED"},
-            // });
-          })
-        }
-        
-        var splitUrl = urlPara!.split("@");
-        var topic = "";
-        if (splitUrl.length > 1)
-        {
-          topic = splitUrl[0].slice(3);
-        }
 
-        var pairings = web3wallet.core.pairing.getPairings();
-        pairings.map((pair: any) => {
-          //web3wallet.core.pairing.disconnect({topic: pair.topic});
-        })
-        var existingPairing = pairings.find((pair: any) => {
-          return pair.topic == topic;
-        });
-
-        if (existingPairing == undefined) {
-          // if (pairings.length == 0) {
-            console.log("NEW PAIRING")
-            console.log(topic)
-            var pairing = await web3wallet.core.pairing.pair({ uri: urlPara! });
-          // }              
-        }
-        else {
-          console.log("ALREADY PAIRED")
-          console.log(topic)
-        }
-      }   
+    // dispatch({
+    //   type: 'changeOfflineMessageVisibility',
+    //   status: { offlineMessage: {visible: true} }
+    // })?.bind(this);
+    dispatch({
+      type: 'changeOfflineMessageVisibility',
+      status: { offlineMessage: {visible: true} }
     });
-  }
+    Linking.canOpenURL(urlPara!).then(async (supported) => {      
+      if (supported) {                
+        
+        try {
+          
+          // event.url = ""
+          
+          
+          // Object.values(web3wallet.getActiveSessions()).map(async (session: any) => console.log(await session.topic))
+          var sessionAvailable = false;          
+          var activeSessions = await web3wallet?.getActiveSessions();
+          
+          // console.log(activeSessions);
+          if (activeSessions) {
+            Object.keys(activeSessions).map(async (topic: string) => {
+              console.log("Session: ")
+              console.log(topic)
+              sessionAvailable = true;
+              // await web3wallet.disconnectSession({
+              //   topic: topic,
+              //   reason: {code: 0,  message: "USER DISCONNECTED"},
+              // });
+            })
+          }
+          
+          if ( urlPara!.split("?requestId=").length > 1) {
+            if (!sessionAvailable) {
+              BackHandler.exitApp();
+              return;
+            }
+              return;
+          }
+          var splitUrl = urlPara!.split("@");
+          var topic = "";
+          if (splitUrl.length > 1)
+          {
+            topic = splitUrl[0].slice(3);
+          }
+          
+          var pairings = web3wallet.core.pairing.getPairings();
+          pairings.map((pair: any) => {
+            //web3wallet.core.pairing.disconnect({topic: pair.topic});
+          })
+          var existingPairing = pairings.find((pair: any) => {
+            return pair.topic == topic;
+          });
+
+          if (existingPairing == undefined && !sessionAvailable) {
+            // if (pairings.length == 0) {
+              console.log("NEW PAIRING")
+              console.log(topic)
+              var pairing = await web3wallet.core.pairing.pair({ uri: urlPara! });
+            // }              
+          }
+          else {
+            console.log("ALREADY PAIRED")
+            console.log(topic)
+            if (!sessionAvailable) {
+              if (appState.current.match(/active|background/)) {
+                setTimeout(() => {
+                  BackHandler.exitApp();
+                }, 2000);
+              }
+            }
+          }
+          
+      } catch (error: any) {
+        // BackHandler.exitApp();
+        return;
+      }
+      }  
+    
+    });
+    
+    dispatch({
+      type: 'changeOfflineMessageVisibility',
+      status: { offlineMessage: {visible: false} }
+    });
+
+  }, [dispatch, web3wallet, appState, BackHandler, Linking])
 
   useEffect(() => {
     
-    if (web3wallet)
-    {
-      web3wallet.on("session_proposal", onSessionProposal);
-      web3wallet.on("session_request", onSessionRequest);
+    if (isInitialized) {
+      return;
+      
     }
+    let sessionProposal: EventEmmiter;
+    let sessionRequest: EventEmmiter;
+
     if (url) {
+      (console.log("OPEN web3wallet on INITIAL LOAD once!"))
       openDeepLink()
     }
-
+    
+    if (web3wallet)
+    {
+      setIsInitialized(true);
+      web3wallet.on("session_proposal", onSessionProposal);
+      web3wallet.on("session_request", onSessionRequest);      
+    } 
     Linking.addEventListener("url", (event) => {
       openDeepLink(event.url);
     });
+
     return () => {
-      // subscription.remove();
-      Linking.removeAllListeners('url');
+      Linking.removeAllListeners("url");
+      sessionProposal?.removeAllListeners();
+      sessionRequest?.removeAllListeners();
     }
-   
 
   }, [web3wallet]);
 
   
   const onSessionRequest = useCallback(
     async (requestEvent: SignClientTypes.EventArguments["session_request"]) => {
-      const { id, topic, params } = requestEvent;
+
+      const topic = requestEvent?.topic;
+      const params = requestEvent?.params;
+      let id = requestEvent?.id;
+
       const { request } = params;
       const requestSessionData = web3wallet.engine.signClient.session.get(topic);
-        
+      const network = getNetwork();
+
+      if (!id) {
+        id = 0;
+      }
+      console.log(id);
+      console.log("asdasdasdas ID asdsad");
+
         var response: JsonRpcResponse = 
         {
           id,
@@ -178,9 +246,12 @@ export const LayoutNew = () => {
         var lovelace = "";
         var myAddress = "";
         var paymentKeyHash = "";
+        const existingWallet = getCurrentAccount();
+        
         if (existingWallet !== undefined) {
-          lovelace = ((existingWallet[network.id]?.lovelace) as string);
-          const adr = await ((await Address.from_bech32(existingWallet[network.id]?.paymentAddr as string)) as Address).to_bytes();
+          console.log("ASDUJKHASKDHJKASHDJKALSDZGHJLKASGHDJKLASGDHJKASGDHJKASGDJKAS")
+          lovelace = ((existingWallet[network?.id]?.lovelace) as string);
+          const adr = await ((await Address.from_bech32(existingWallet[network?.id]?.paymentAddr as string)) as Address).to_bytes();
           myAddress = Buffer.from(adr).toString('hex');
           paymentKeyHash = existingWallet.paymentKeyHash;
         }
@@ -198,6 +269,15 @@ export const LayoutNew = () => {
               jsonrpc: "2.0",
               result: lovelace
             }
+            BackHandler.exitApp();
+          break;
+        case "cardano_exitWallet":
+          if (request?.params[0]) {
+            Toast.show({text1: request?.params[0], type: "error" })
+          }                
+          setTimeout(() => {
+            BackHandler.exitApp();
+          }, 3000)
           break;
         case "cardano_signTx":
             setRequestEvent(requestEvent);
@@ -214,8 +294,9 @@ export const LayoutNew = () => {
               {
                 id,
                 jsonrpc: "2.0",
-                result: network.id
+                result: network?.id
               }
+              
             break;
         case "cardano_submitTx":
           var signedTxCbor = request.params[0];
@@ -280,21 +361,20 @@ export const LayoutNew = () => {
         
         
         await web3wallet.respondSessionRequest({response: response, topic: topic});
-        BackHandler.exitApp();
     },
     [password, validPassword]
   );
 
 const submitTx = async (tx: any) => {
-  const network = await getNetwork();
+  const network = getNetwork();
   
   var submitUrl: string | undefined = undefined;
-  if (network.id === NETWORK_ID.mainnet) {
-    submitUrl = network.mainnetSubmit;
-  } else if (network.id === NETWORK_ID.preprod) {
-    submitUrl = network.preprodSubmit;
-  } else if (network.id === NETWORK_ID.preview) {
-    submitUrl = network.previewSubmit;
+  if (network?.id === NETWORK_ID.mainnet) {
+    submitUrl = network?.mainnetSubmit;
+  } else if (network?.id === NETWORK_ID.preprod) {
+    submitUrl = network?.preprodSubmit;
+  } else if (network?.id === NETWORK_ID.preview) {
+    submitUrl = network?.previewSubmit;
   }
   if (submitUrl) {
     const result = await fetch(submitUrl as string, {
@@ -382,20 +462,31 @@ const signAndSubmit = async (
   return txHashResult;
 };
 
-async function handleAccept() {
+
+  const handleAccept = useCallback(
+    async () => {
+
+    
   const { id, params } = currentProposal;
   const { requiredNamespaces, relays } = params;
+  const network = getNetwork();
+  const existingWallet = getCurrentAccount();
 
   // var relay = currentProposal.params.relays[0];
   // var requiredNamespaces = currentProposal.params.requiredNamespaces;
-      
+  
+  dispatch({
+    type: 'changeOfflineMessageVisibility',
+    status: { offlineMessage: {visible: true} }
+  });
+  
   if (currentProposal) {
     const namespaces: SessionTypes.Namespaces = {};
       Object.keys(requiredNamespaces).forEach(key => {
         const accounts: string[] = [];
         var address = "";
         if (existingWallet !== undefined) {
-          address = existingWallet[network.id]?.paymentAddr as string;
+          address = existingWallet[network?.id]?.paymentAddr as string;
         }
         
         // console.log("ADDRESSSSS: " + address);
@@ -409,17 +500,26 @@ async function handleAccept() {
           events: requiredNamespaces[key].events,
         };
       });
-    await web3wallet.approveSession({
-      id,
-      relayProtocol: relays[0].protocol,
-      namespaces,
-    });
+      await web3wallet.approveSession({
+        id,
+        relayProtocol: relays[0].protocol,
+        namespaces,
+      });
 
     setModalVisible(false);
     setCurrentWCURI("");
     setCurrentProposal({} as SignClientTypes.EventArguments["session_proposal"]);
     setSuccessfulSession(true);
-    BackHandler.exitApp();
+
+    dispatch({
+      type: 'changeOfflineMessageVisibility',
+      status: { offlineMessage: {visible: false} }
+    });
+
+    // setTimeout(() => {
+    //   BackHandler.exitApp();
+    // }, 2000);
+    
   }
 
 
@@ -432,7 +532,8 @@ async function handleAccept() {
       //   relayProtocol: relay.protocol,
       //   namespaces,
       // });
-}
+    }, [dispatch, currentProposal])
+
 
 const onCorrectPassword = (e: any) => {
   clearTimeout(savedPasswordTimeoutId);
@@ -512,13 +613,14 @@ async function handleReject() {
           background: isDarkMode ? Colors.darker : Colors.lighter
         },
       };
-      useEffect(() => {        
+      useEffect(() => {  
         Linking.addEventListener("url", (event) => {
-          openDeepLink(event.url);
+           openDeepLink(event.url);
         });
+        
         return () => {
           // subscription.remove();
-          // Linking.removeAllListeners('url');
+          Linking.removeAllListeners('url');
         }
       }, [])
     return (

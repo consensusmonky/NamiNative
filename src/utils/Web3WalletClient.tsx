@@ -12,10 +12,8 @@ import { useCallback, useEffect, useState } from 'react';
 
 export async function createWeb3Wallet() {
 
-
-
-
-console.log("URL: " + ENV_RELAY_URL)
+  try {
+    console.log("URL: " + ENV_RELAY_URL)
   
   // console.log('ENV_PROJECT_ID', ENV_PROJECT_ID);
   // console.log('ENV_RELAY_URL', ENV_RELAY_URL);
@@ -32,12 +30,18 @@ console.log("URL: " + ENV_RELAY_URL)
   web3wallet = await Web3Wallet.init({
     core,
     metadata: {
-      name: 'React Native Web3Wallet',
-      description: 'ReactNative Web3Wallet',
-      url: 'https://walletconnect.com/',
+      name: 'Nami Native Cardano Wallet',
+      description: 'A Cardano Web3Wallet',
+      url: 'https://consensusmonky.de/',
       icons: ['https://avatars.githubusercontent.com/u/37784886'],
     },
   });
+  } catch (error) {
+    console.log("FEEEEEHLER:")
+    console.log(error);
+    console.log("FEEEEEHLER:")
+  }
+  
 }
 
 export async function _pair(params: {uri: string}) {

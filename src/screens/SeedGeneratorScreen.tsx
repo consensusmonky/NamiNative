@@ -189,6 +189,7 @@ export const SeedGeneratorScreen = ({navigation, route}: any) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [restoreMode, setRestoreMode] = useState(false);
   const [validMnemonic, setValidMnemonic] = useState(false);
+  
   const [checked, setChecked] = useState("unchecked" as "checked" | "unchecked" | "indeterminate");
 
   useEffect(() => {
@@ -245,7 +246,7 @@ export const SeedGeneratorScreen = ({navigation, route}: any) => {
   const [suggestionsList, setSuggestionsList] = useState(new Array<{ id: string, title: string}>())
   const dropdownController = useRef(null)
 
-  const searchRef = useRef({} as any)
+  const searchRef = useRef<any|null>(null)
 
   const getSuggestions = useCallback(async (q: any) => {
     if (q == '' || (selectedItem == '' && q == '')) {
@@ -341,28 +342,33 @@ export const SeedGeneratorScreen = ({navigation, route}: any) => {
                                     /> */}
           <View style={[!restoreMode ? {display: 'none'} : {}, {marginTop: 64, zIndex: 10}]}>
             <AutocompleteDropdown
+              ref={searchRef}
               onChangeText={getSuggestions}
               clearOnFocus={true}
               closeOnBlur={true}
               closeOnSubmit={false}
+              
               // onClear={() => {setSuggestionsList([])}}
               // initialValue={{ id: '2' }} // or just '2'
-              onSelectItem={item => {
+              onSelectItem={async (item) => {
                 // Alert.alert(item?.id)
+                
                 if (item == undefined || mnemonicInfo.length == 24) {
                   return;
                 }
-                
                 
                 mnemonicInfo.push({word: item.title as string, index: mnemonicInfo.length + 1});
                 
                 item && setSelectedItem(item.id)
                 
-                mnemonicToEntropy(mnemonicFromObject(mnemonicInfo.map((wordInfo) => wordInfo.word))).then((res: any) => {
+                await mnemonicToEntropy(mnemonicFromObject(mnemonicInfo.map((wordInfo) => wordInfo.word))).then((res: any) => {
                   setValidMnemonic(true);
                 }).catch(() => {
                   setValidMnemonic(false);
                 });
+                if (mnemonicInfo.length < 24) {
+                  searchRef.current?.focus();
+                }
               }}
               onBlur={() => {setSelectedItem("")}}
               direction={Platform.select({ ios: 'down', android: 'down' })}
