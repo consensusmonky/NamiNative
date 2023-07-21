@@ -5,22 +5,27 @@ The nami wallet chrome extension ported to react-native mobile app
 
 # NamiNative
 
-NamiNative is a mobile wallet to interact with the Cardano blockchain. It's an open-source project and built by [**Berry Pool**](https://pipool.online) and [**consensusMonky Pool**](https://consensusmonky.de).
+NamiNative is a mobile wallet to interact with the Cardano blockchain. It's an open-source project and built by [**consensusMonky Pool**](https://consensusmonky.de).
 
 ### Testnet Preprod Version
 
-[Download testnet version](./releases/NamiNative_v1.0.0.apk)
+[Download testnet version](./releases/NamiNative_v0.1.0_beta.apk)
 
 Download the APK and create a new wallet or restore an existing one.
-Currently the wallet is only communicating with the preprod testnet.
+Currently the wallet is only connected to the preprod testnet.
 
-The mainnet network will be added after some more tests.
+The mainnet network will be added soon.
 
 ### Early version
 
 As NamiNative is still in development, nevertheless it is important for to get your feedback.
 We build a product that combines the best features of the Chrome version with your best practices and experience in Web3.
 Every idea and feedback from the community is welcome and should be directly incorporated into the product.
+
+### Supported dApp Dienay.io
+
+You can test the WalletConnect integration on https://playground.dienay.io
+The NFT Minter does not mint NFTs for now but locks UTxO at a ScriptAddress, which can only redeemed by the original signer.
 
 ### Supported OS
 
@@ -40,10 +45,12 @@ https://github.com/Emurgo/csl-mobile-bridge
 - dApp connector
 - Ledger support
 - NFT Viewer
-- Spacebudz integration
-- Wormhole integration
+- and more
 
 ### Website
 
-Visit [Berry Pool](https://pipool.online)<br/>
-Visit [consensusMonky Pool](https://consensusmonky.de)
+NamiNative by
+[consensusMonky Pool](https://consensusmonky.de)
+
+Ported from Nami Wallet (Chrome version) made by
+[Berry Pool](https://pipool.online)<br/>
