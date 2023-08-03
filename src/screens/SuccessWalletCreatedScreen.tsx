@@ -137,7 +137,7 @@ export const SuccessWalletCreatedScreen = ({navigation}: any) => {
   function goBackHome() {
     dispatch({
       type: 'changeLoadingScreenVisibility',
-      status: { loadingScreen: {visible: true} }
+      status: { loadingScreen: {visible: true, useBackgroundImage: true, opacity: 1} }
     });
 
     setModalVisible(!modalVisible);

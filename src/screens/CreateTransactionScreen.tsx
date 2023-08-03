@@ -970,7 +970,7 @@ const changeAmount = (newAmount: string) => {
 
     return (
     <SafeAreaView> 
-      <View style={{zIndex: 10}}>
+      <View style={{zIndex: 100}}>
         <Toast />
       </View>
     <View style={{paddingTop: 50}}>

@@ -7,6 +7,7 @@ import { Backpack } from 'react-kawaii/lib/native/';
 
 import {
   Alert,
+    AppState,
     Image,
     Modal,
     Platform,
@@ -137,7 +138,7 @@ export const HomeScreen = ({navigation, route}: any) => {
   //   }
   // });
 
-
+  const [appState, setAppState] = useState(AppState.currentState);
   const [isScannerVisible, setIsScannerVisible] = useState(false);
 
   async function updateTransactions(initialUpdate: boolean = false) {
@@ -240,6 +241,19 @@ export const HomeScreen = ({navigation, route}: any) => {
     const useIsMounted = () => {
     const isMounted = React.useRef(false);
     React.useEffect(() => {
+
+
+      const appStateListener = AppState.addEventListener(
+        'change',
+        nextAppState => {
+          setIsLoading(false);
+          setAppState(nextAppState);
+        },
+      );
+      return () => {
+        appStateListener?.remove();
+      };
+
 
       // dispatch({
       //   type: 'changeLoadingScreenVisibility',
@@ -631,7 +645,7 @@ export const HomeScreen = ({navigation, route}: any) => {
     if (!existingWallet) {
         dispatch({
             type: 'changeLoadingScreenVisibility',
-            status: { loadingScreen: {visible: false} }
+            status: { loadingScreen: {visible: false, useBackgroundImage: true, opacity: 1} }
           });
         setTransactions([...transactions]);
         setIsLoading(false);
@@ -684,7 +698,7 @@ export const HomeScreen = ({navigation, route}: any) => {
     
     dispatch({
         type: 'changeLoadingScreenVisibility',
-        status: { loadingScreen: {visible: false} }
+        status: { loadingScreen: {visible: false, useBackgroundImage: true, opacity: 1} }
       });
     setIsLoading(false);
   };
@@ -693,7 +707,7 @@ export const HomeScreen = ({navigation, route}: any) => {
     if (!route?.params?.hideLoadingScreen) {
       dispatch({
         type: 'changeLoadingScreenVisibility',
-        status: { loadingScreen: {visible: true} }
+        status: { loadingScreen: {visible: true, useBackgroundImage: true, opacity: 1} }
       });
     }
     if (route.params?.skipWalletUpdate) {
@@ -711,7 +725,7 @@ export const HomeScreen = ({navigation, route}: any) => {
     return (
         
     <View style={[{paddingTop: 22, flexDirection: 'column', flex: 1}]}>
-      <View style={{zIndex: 10}}>
+      <View style={{zIndex: 100}}>
         <Toast />
       </View>      
 

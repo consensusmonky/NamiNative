@@ -10,12 +10,14 @@ import { useEffect, useState } from "react";
 import { getSdkError } from "@walletconnect/utils";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 import React from "react";
+import { useStateValue } from "../../hooks/StateProvider";
 
 interface SigningModalProps {
   visible: boolean;
   setModalVisible: (arg1: boolean) => void;
   requestSession: any;
   requestEvent: SignClientTypes.EventArguments["session_request"] | undefined;
+  password: string;
 }
 
 
@@ -24,11 +26,13 @@ export default function SigningModal({
   setModalVisible,
   requestEvent,
   requestSession,
+  password
 }: SigningModalProps) {
   // CurrentProposal values
 
   const isDarkMode = useColorScheme() === 'dark';
-
+  const [{ initialLoadingReducer }, dispatch] = useStateValue();
+  
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -147,7 +151,7 @@ export default function SigningModal({
             var signedWitnessSet = await signTx(
               txHash,
               [paymentKeyHash],
-              "12345678",
+              password,
               0
             );
             // console.log("BBBB: ");
@@ -165,6 +169,12 @@ export default function SigningModal({
 
       await web3wallet.respondSessionRequest({response: response, topic: topic});     
       setModalVisible(false);
+
+      dispatch({
+        type: 'changeLoadingScreenVisibility',
+        status: { loadingScreen: {visible: false, useBackgroundImage: false, opacity: 0.95} }
+      });
+      
       BackHandler.exitApp();
     }
   }
@@ -181,6 +191,12 @@ export default function SigningModal({
       });
       
       setModalVisible(false);
+      
+      dispatch({
+        type: 'changeLoadingScreenVisibility',
+        status: { loadingScreen: {visible: false, useBackgroundImage: false, opacity: 0.95} }
+      });
+
       BackHandler.exitApp();
     }
   }

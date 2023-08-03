@@ -32,4 +32,15 @@ public class MainActivity extends ReactActivity {
         DefaultNewArchitectureEntryPoint.getConcurrentReactEnabled() // concurrentRootEnabled
         );
   }
+
+  @Override
+  public void invokeDefaultOnBackPressed() {
+      moveTaskToBack(true);
+  }
+
+  @Override
+  public void onBackPressed () {
+      moveTaskToBack(true);
+  }
+
 }

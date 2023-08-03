@@ -1,6 +1,6 @@
 import { Alert } from "react-native";
 
-export const InitialStateReducer = (state: any, action: {type: string, status: {loadingScreen: {visible: boolean}, offlineMessage: {visible: boolean}}}) => {
+export const InitialStateReducer = (state: any, action: {type: string, status: {loadingScreen: {visible: boolean, useBackgroundImage: true, opacity: 1 }, offlineMessage: {visible: boolean}}}) => {
   
     switch (action.type) {
       
