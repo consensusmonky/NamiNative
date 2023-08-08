@@ -35,12 +35,12 @@ public class MainActivity extends ReactActivity {
 
   @Override
   public void invokeDefaultOnBackPressed() {
-      moveTaskToBack(true);
+       moveTaskToBack(true);
   }
 
   @Override
   public void onBackPressed () {
-      moveTaskToBack(true);
+      // moveTaskToBack(true);
   }
 
 }

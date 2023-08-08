@@ -1,4 +1,4 @@
-import { BackHandler, Button, Image, Modal, StyleSheet, Text, View, useColorScheme } from "react-native";
+import { Alert, BackHandler, Button, Image, Modal, StyleSheet, Text, View, useColorScheme } from "react-native";
 import { SignClientTypes } from "@walletconnect/types";
 import { Address, Transaction, TransactionBody, TransactionWitnessSet, hash_transaction } from "@emurgo/react-native-haskell-shelley";
 import { signTx } from "../../utils/Ledger";
@@ -6,7 +6,7 @@ import { getCurrentAccount, getNetwork } from "../../services/NetworkDataProvide
 import { ErrorResponse, JsonRpcResponse, JsonRpcError, formatJsonRpcResult, formatJsonRpcError } from "@walletconnect/jsonrpc-utils";
 import { web3wallet } from "../../utils/Web3WalletClient";
 import { Buffer } from "buffer";
-import { useEffect, useState } from "react";
+import { Ref, forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { getSdkError } from "@walletconnect/utils";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 import React from "react";
@@ -20,18 +20,20 @@ interface SigningModalProps {
   password: string;
 }
 
-
-export default function SigningModal({
+export default forwardRef<{waitForResponse: () => Promise<JsonRpcResponse>}, SigningModalProps>(function SigningModal({
   visible,
   setModalVisible,
   requestEvent,
   requestSession,
   password
-}: SigningModalProps) {
+}: SigningModalProps, ref: Ref<{waitForResponse: () => Promise<JsonRpcResponse>}>) {
   // CurrentProposal values
-
+  useImperativeHandle(ref, () => ({ waitForResponse }));
   const isDarkMode = useColorScheme() === 'dark';
   const [{ initialLoadingReducer }, dispatch] = useStateValue();
+
+  const userResponsed = useRef(false);
+  const response = useRef<JsonRpcResponse>();
   
   const styles = StyleSheet.create({
     container: {
@@ -68,6 +70,26 @@ export default function SigningModal({
   });
 
   if (!requestEvent || !requestSession) return null;
+
+  async function waitForResponse() {
+    response.current = formatJsonRpcError(requestEvent?.id ?? 0, getSdkError("USER_REJECTED").message);
+    return new Promise<JsonRpcResponse>(async (resolve, reject) => {
+      const timeout = setTimeout(() => {
+          resolve(response.current ?? formatJsonRpcError(requestEvent?.id ?? 0, getSdkError("USER_REJECTED").message));
+      }, 30000);
+       while (!userResponsed.current) {
+          await new Promise<void>((resolveTimeout, _) => {
+              setTimeout(() => {
+                resolveTimeout();
+              }, 1000)
+          });
+       }
+      clearTimeout(timeout);
+      userResponsed.current = false;
+
+      return resolve(response.current ?? formatJsonRpcError(requestEvent?.id ?? 0, getSdkError("USER_REJECTED").message));
+    });
+  }
 
   useEffect(() => {
     if (!requestEvent || !requestEvent?.params?.request) {
@@ -160,44 +182,62 @@ export default function SigningModal({
             witnessSetCbor = Buffer.from(await signedWitnessSet.to_bytes()).toString('hex');  
           }
           
-          const response: JsonRpcResponse = 
+          response.current = 
             {
               id,
               jsonrpc: "2.0",
               result: witnessSetCbor
             }
 
-      await web3wallet.respondSessionRequest({response: response, topic: topic});     
-      setModalVisible(false);
+      // await web3wallet.respondSessionRequest({response: response, topic: topic});     
+       setModalVisible(false);
 
-      dispatch({
-        type: 'changeLoadingScreenVisibility',
-        status: { loadingScreen: {visible: false, useBackgroundImage: false, opacity: 0.95} }
-      });
-      
-      BackHandler.exitApp();
+      // dispatch({
+      //   type: 'changeLoadingScreenVisibility',
+      //   status: { loadingScreen: {visible: false, useBackgroundImage: false, opacity: 0.95} }
+      // });
+       
+      userResponsed.current = true;
+      // setTimeout(() => {
+      //   BackHandler.exitApp();
+      // }, 500);
     }
   }
 
   async function onReject() {
     if (requestEvent) {
-      const {id} = requestEvent;
-      // const response = rejectEIP155Request(requestEvent);
-      const respones = formatJsonRpcError(id, getSdkError("USER_REJECTED").message);
-      //rejectSession
-      await web3wallet.respondSessionRequest({
-        topic: topic,
-        response: respones
-      });
-      
+      const {id, topic} = requestEvent;
+
+    //  dispatch({
+    //   type: 'changeLoadingScreenVisibility',
+    //   status: { loadingScreen: {visible: false, useBackgroundImage: false, opacity: 0.95} }
+    //  });
+
+     if (!id)
+     {
+      return;
+     }
+
       setModalVisible(false);
       
-      dispatch({
-        type: 'changeLoadingScreenVisibility',
-        status: { loadingScreen: {visible: false, useBackgroundImage: false, opacity: 0.95} }
-      });
+    //  dispatch({
+    //    type: 'changeLoadingScreenVisibility',
+    //    status: { loadingScreen: {visible: false, useBackgroundImage: false, opacity: 0.95} }
+    //  });
 
-      BackHandler.exitApp();
+
+      // const response = rejectEIP155Request(requestEvent);
+      response.current = formatJsonRpcError(id, getSdkError("USER_REJECTED").message);
+      //rejectSession
+      // await web3wallet.respondSessionRequest({
+      //   topic: topic,
+      //   response: response
+      // }); 
+    // response.current = false;   
+    userResponsed.current = true;
+      // setTimeout(() => {
+      //   BackHandler.exitApp();
+      // }, 500);
     }
   }
 
@@ -232,5 +272,5 @@ export default function SigningModal({
       </View>
     </Modal>
   );
-}
+});
 

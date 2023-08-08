@@ -146,12 +146,7 @@ function App(): JSX.Element {
   const styles = makeStyles(isDarkMode);
   const existingWallet = getCurrentAccount();
   let network = getNetwork();
-  const initialized = useInitialization();
-
-
-  useEffect(() => {
-    console.log('App Initalized: ', initialized);
-  }, [initialized]);
+  
   
   
   const [visible, setVisible] = useState(false);
@@ -170,7 +165,7 @@ function App(): JSX.Element {
   const initialState = {
     initialLoadingReducer: {
       type: 'initialState',
-      status: { loadingScreen: {visible: true}, offlineMessage: {visible: false} }
+      status: { loadingScreen: { visible: true, useBackgroundImage: true, opacity: 1 }, offlineMessage: {visible: false} }
     },
     accountInfoReducer: {
       address: {},
