@@ -42,22 +42,13 @@ export async function _pair(params: {uri: string}) {
 }
 
 export default function useInitialization() {
-  const [initialized, setInitialized] = useState(false);
-
-  const onInitialize = useCallback(async () => {
-    try {
-      await createWeb3Wallet();
-      setInitialized(true);
-    } catch (err: unknown) {
-      console.log('Error for initializing', err);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!initialized) {
-      onInitialize();
-    }
-  }, [initialized, onInitialize]);
-
-  return initialized;
+  return new Promise<boolean>(async (resolve, reject) => {    
+      try {
+        await createWeb3Wallet();
+        resolve(true);
+      } catch (err: unknown) {
+        console.log('Error while initializing web3wallet', err);
+        reject(err);
+      }
+});
 }

@@ -14,8 +14,9 @@
       android:icon="@mipmap/ic_launcher"
       android:roundIcon="@mipmap/ic_launcher_round"
       android:allowBackup="false"
-      android:theme="@style/AppTheme">
-      <activity
+      android:theme="@style/BootTheme">
+
+        <activity
         android:name=".MainActivity"
         android:label="@string/app_name"
         android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
@@ -24,19 +25,20 @@
         android:windowSoftInputMode="adjustResize"
         android:exported="true">
 
-        <intent-filter>
+        <intent-filter android:autoVerify="true">
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
         <intent-filter>
-        <action android:name="android.intent.action.VIEW" />
-        <category android:name="android.intent.category.DEFAULT" />
-        <category android:name="android.intent.category.BROWSABLE"/> 
-        <data android:scheme="naminative" />
-        <data android:scheme="wc" />
-    </intent-filter>
-      </activity>
-      <service android:name="com.asterinet.react.bgactions.RNBackgroundActionsTask" />
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE"/> 
+            <data android:scheme="naminative" />
+            <data android:scheme="wc" />
+        </intent-filter>
+        </activity>
+
+        <service android:name="com.asterinet.react.bgactions.RNBackgroundActionsTask" />
 
         <!-- React Native Push Notifications -->
         <!-- Change the value to true to enable pop-up for in foreground on receiving remote notifications (for prevent duplicating while showing local notifications set this to false) -->

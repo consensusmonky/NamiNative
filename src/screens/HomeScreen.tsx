@@ -243,16 +243,16 @@ export const HomeScreen = ({navigation, route}: any) => {
     React.useEffect(() => {
 
 
-      const appStateListener = AppState.addEventListener(
-        'change',
-        nextAppState => {
-          setIsLoading(false);
-          setAppState(nextAppState);
-        },
-      );
-      return () => {
-        appStateListener?.remove();
-      };
+      // const appStateListener = AppState.addEventListener(
+      //   'change',
+      //   nextAppState => {
+      //     setIsLoading(false);
+      //     setAppState(nextAppState);
+      //   },
+      // );
+      // return () => {
+      //   appStateListener?.remove();
+      // };
 
 
       // dispatch({
@@ -703,7 +703,7 @@ export const HomeScreen = ({navigation, route}: any) => {
     setIsLoading(false);
   };
 
-  useEffect(() => {    
+  useEffect(() => {
     if (!route?.params?.hideLoadingScreen) {
       dispatch({
         type: 'changeLoadingScreenVisibility',
@@ -714,7 +714,13 @@ export const HomeScreen = ({navigation, route}: any) => {
       return;
     }
     
-    checkWallet(route.params?.initialWallet);     
+    checkWallet(route.params?.initialWallet).then(() => {
+      dispatch({
+        type: 'setInitializeState',
+        status: { initialized: true }
+      });
+    });
+    
     
   }, [route])
 
@@ -724,11 +730,7 @@ export const HomeScreen = ({navigation, route}: any) => {
 
     return (
         
-    <View style={[{paddingTop: 22, flexDirection: 'column', flex: 1}]}>
-      <View style={{zIndex: 100}}>
-        <Toast />
-      </View>      
-
+    <View style={[{paddingTop: 22, flexDirection: 'column', flex: 1}]}>  
         <Stack fill center spacing={4}>
               {/* <Pressable
                 style={[styles.button, styles.buttonOpen]}

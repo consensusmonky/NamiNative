@@ -145,17 +145,10 @@ function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   const styles = makeStyles(isDarkMode);
   const existingWallet = getCurrentAccount();
-  let network = getNetwork();
-  
-  
-  
+  let network = getNetwork();  
   const [visible, setVisible] = useState(false);
 
-  // useEffect(() => {
-  //   setInterval(() => {
-  //     setVisible(!visible);
-  //   }, 2000);
-  // }, []);
+
 
   // initial State property
   // const initialState = {
@@ -165,7 +158,7 @@ function App(): JSX.Element {
   const initialState = {
     initialLoadingReducer: {
       type: 'initialState',
-      status: { loadingScreen: { visible: true, useBackgroundImage: true, opacity: 1 }, offlineMessage: {visible: false} }
+      status: { loadingScreen: { visible: true, useBackgroundImage: true, opacity: 1 }, offlineMessage: {visible: false}, exitAppTimeoutId: undefined, initialized: false }
     },
     accountInfoReducer: {
       address: {},
@@ -176,6 +169,18 @@ function App(): JSX.Element {
       tx: {}
     }
   };
+
+  useEffect(() => {
+    if (!initialState.initialLoadingReducer.status.exitAppTimeoutId) {
+        return;
+    }
+    
+    clearTimeout(initialState.initialLoadingReducer.status.exitAppTimeoutId)
+
+  //   setInterval(() => {
+  //     setVisible(!visible);
+  //   }, 2000);
+  }, []);
   
   // const reducer = (state: any, action: {type: string, loadingScreen: {visible: boolean}}) => {
   //   switch (action.type) {

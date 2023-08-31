@@ -45,6 +45,7 @@
     "react-native-autocomplete-dropdown": "^2.1.0",
     "react-native-background-actions": "^3.0.0",
     "react-native-background-fetch": "^4.1.9",
+    "react-native-bootsplash": "^4.7.5",
     "react-native-camera": "github:consensusmonky/react-native-camera#master",
     "react-native-dotenv": "^3.4.8",
     "react-native-elastic-view": "^0.0.2",
