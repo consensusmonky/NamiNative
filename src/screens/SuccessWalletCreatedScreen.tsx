@@ -143,7 +143,7 @@ export const SuccessWalletCreatedScreen = ({navigation}: any) => {
     setModalVisible(!modalVisible);
     setChecked("unchecked");
     setTimeout(() => {
-      navigation.navigate('Home', {initialWallet: true});
+      navigation.navigate('Initial', {initialWallet: true});
     }, 500)
   }
 

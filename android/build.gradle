@@ -14,6 +14,7 @@ buildscript {
         // React Native Push Notifications
         googlePlayServicesVersion = "22.0.0" // default: "+"
         firebaseMessagingVersion = "21.1.0" // default: "21.1.0"
+        googlePlayServicesIidVersion = "17.0.0"
     }
     repositories {
         google()
@@ -29,6 +30,7 @@ buildscript {
 
 allprojects {
     repositories {
+        google()
         mavenLocal()
         maven {
             // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm

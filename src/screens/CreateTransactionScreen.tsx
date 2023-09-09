@@ -979,10 +979,11 @@ const changeAmount = (newAmount: string) => {
             
             <SvgXml xml={dataUriExample} width={75} height={75} fill={"#61DDBC"}  />  
             </View>
-            <View style={[styles.container, {paddingTop: 20}]}>
-              <Text style={[styles.sectionTitle, {fontSize: 32}]}>Send</Text>
-            </View>
-            
+            <TouchableOpacity>
+              <View style={[styles.container, {paddingTop: 20}]}>
+                <Text style={[styles.sectionTitle, {fontSize: 32}]}>Send</Text>
+              </View>
+            </TouchableOpacity>
             
           <View
             style={{

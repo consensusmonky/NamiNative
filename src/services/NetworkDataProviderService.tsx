@@ -10,6 +10,7 @@ import { Buffer } from "buffer";
 import crc from 'crc';
 import { Wallet } from "../storage/Wallet";
 import { getInitalNetwork } from "../utils/ApiExtensions"
+import EpochInfo from "../types/EpochInfo";
 
 export const getBalance = async () => {
     const currentAccount = await getCurrentAccount() as AccountInfo;
@@ -418,6 +419,11 @@ export const submitTx = async (tx: any) => {
     return new Error("ETH/Milkomeda Addresses not supported at the moment.");
     // return Web3Utils.isAddress(address);
   };
+
+  export const getLatestEpochData : () => Promise<EpochInfo> = async () => {
+    const latestEpochInfo = await blockfrostRequest(`/epochs/latest`);
+    return latestEpochInfo;
+  } 
 
   export const initTx = async () => {
     const latest_block = await blockfrostRequest('/blocks/latest');

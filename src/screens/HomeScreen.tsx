@@ -510,7 +510,7 @@ export const HomeScreen = ({navigation, route}: any) => {
 
    const showWalletScreen = useMemo(() => {   
     return (
-      <SafeAreaView> 
+      <SafeAreaView style={{flex: 1 , backgroundColor: Colors.darker}}> 
         { isScannerVisible ? 
                 <View style={[{ position: 'absolute', flex: 1, zIndex: 10,  alignItems: 'center', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: Colors.darker}]}>
                   <View style={[{position: 'relative', borderRadius: 6}]}>
@@ -731,7 +731,7 @@ export const HomeScreen = ({navigation, route}: any) => {
     return (
         
     <View style={[{paddingTop: 22, flexDirection: 'column', flex: 1}]}>  
-        <Stack fill center spacing={4}>
+        {/* <Stack fill center spacing={4}> */}
               {/* <Pressable
                 style={[styles.button, styles.buttonOpen]}
                 onPress={() => setModalVisible(true)}>
@@ -741,9 +741,9 @@ export const HomeScreen = ({navigation, route}: any) => {
             icon="login"
             onPress={() => console.log('Pressed')}
           /> */}
-          {!walletIsAvailable ? homeComponent() : showWalletScreen}
+          {walletIsAvailable ? showWalletScreen : <></>}
           
-        </Stack>
+        {/* </Stack> */}
     </View>
     );    
 };

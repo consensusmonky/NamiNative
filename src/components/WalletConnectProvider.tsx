@@ -19,6 +19,8 @@ import { makeStyles } from "../../style";
 import SigningModal from "../screens/SigningModal/SigningModal";
 import { requestAccountKey } from "../utils/WalletServiceProvider";
 import PairingModal from "../screens/PairingModal/PairingModal";
+import DeviceInfo, { PowerState, getBatteryLevel } from 'react-native-device-info';
+import RNRestart from 'react-native-restart';
 
 interface ProviderParameters {
     deepLink: any;
@@ -90,7 +92,7 @@ export const WalletConnectProvider = (props: ProviderParameters) => {
   const [requestSession, setRequestSession] = useState({} as any);
   const [requestEvent, setRequestEvent] = useState({} as SignClientTypes.EventArguments["session_request"] | undefined);
   const url = useRef("");
-
+  
   const closeWalletTimeout = useRef<NodeJS.Timeout>();
   const waitForResponseTimeout = useRef<NodeJS.Timeout>();
   const incomingSessionEvent = useRef<NodeJS.Timeout>();
@@ -104,6 +106,8 @@ export const WalletConnectProvider = (props: ProviderParameters) => {
   
   const onSessionProposal = useCallback(
     async (proposal: SignClientTypes.EventArguments["session_proposal"]) => {
+      
+      clearTimeout(incomingSessionEvent.current);
       clearTimeout(closeWalletTimeout.current);
       clearTimeout(userAcceptanceTimeout.current);
       dispatch({
@@ -111,7 +115,7 @@ export const WalletConnectProvider = (props: ProviderParameters) => {
         status: { loadingScreen: {visible: true, useBackgroundImage: false, opacity: 0.95} }
       });
       
-      console.log("proposal:----->");      
+      console.log("proposal:----->");
       currentProposal.current = proposal;
       setModalVisible(true);
 
@@ -125,15 +129,34 @@ export const WalletConnectProvider = (props: ProviderParameters) => {
 
   const onSessionRequest = useCallback(
     async (requestEvent: SignClientTypes.EventArguments["session_request"]) => {
-
+      
       clearTimeout(incomingSessionEvent.current);
       clearTimeout(closeWalletTimeout.current);
-      clearTimeout(waitForResponseTimeout.current);
+      clearTimeout(waitForResponseTimeout.current);      
+      requestStack.current.push(false);
+
+      dispatch({
+        type: 'changeLoadingScreenVisibility',
+        status: { loadingScreen: {visible: true, useBackgroundImage: false, opacity: 0.95} }
+      });     
+      
+      // const batteryLevel = await getBatteryLevel();
+      DeviceInfo.getPowerState().then(async (state) => {
+        if ((state?.batteryLevel && state?.batteryLevel <= 0.1 && state?.batteryState && state?.batteryState == "unplugged" || state?.lowPowerMode) && requestStack.current.length == 1) {
+          Toast.show({text1: 'Your battery is low. Your dApp connection may fail.', type: "error" })
+          await new Promise<void>((resolve, _) => {
+              setTimeout(() => {
+                  return resolve();
+              }, 0);
+          });
+        }
+      });      
+
       console.log("KEIN ERRROR 1")
       var goBackToDApp = false;
       var forceClose = false;
 
-      requestStack.current.push(false);
+      
       var requestIndex = requestStack.current.length - 1;
       const prevIndex = requestIndex - 1;
       console.log("PREVINDEX")
@@ -141,11 +164,6 @@ export const WalletConnectProvider = (props: ProviderParameters) => {
       if (prevIndex >= 0) {
         requestStack.current[prevIndex] = true;
       }
-            
-      dispatch({
-        type: 'changeLoadingScreenVisibility',
-        status: { loadingScreen: {visible: true, useBackgroundImage: false, opacity: 0.95} }
-      });     
 
       const topic = requestEvent?.topic;
       const params = requestEvent?.params;
@@ -410,7 +428,7 @@ export const WalletConnectProvider = (props: ProviderParameters) => {
                 requestStack.current = [];
                 BackHandler.exitApp();
               }              
-            }, 800);
+            }, 1500);
             dispatch({
               type: 'setExitAppTimeout',
               status: { exitAppTimeoutId: closeWalletTimeout.current }
@@ -651,6 +669,10 @@ export const WalletConnectProvider = (props: ProviderParameters) => {
                 resolve(isInitialized.current);
             }, 10000);
           });
+
+          incomingSessionEvent.current = setTimeout(() => {
+              RNRestart.restart();    
+            }, 15000)
 
           console.log("NOOOOOO2222")       
           dispatch({

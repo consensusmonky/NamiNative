@@ -14,6 +14,9 @@ import React, { useEffect, useState } from "react";
 import Toast from "react-native-toast-message";
 import RNBootSplash from 'react-native-bootsplash';
 import { WalletConnectProvider } from "../components/WalletConnectProvider";
+import { InitialScreen } from "./InitalScreen";
+import { getCurrentAccount } from "../services/NetworkDataProviderService";
+import { WelcomeScreen } from "./WelcomeScreen";
 
 export const LayoutNew = () => {
 
@@ -21,6 +24,7 @@ export const LayoutNew = () => {
 
   const isDarkMode = useColorScheme() === 'dark';
   const styles = makeStyles(isDarkMode);
+  const [walletIsAvailable, setWalletIsAvailable] = useState(false);
 
   const netInfo = useNetInfo();
 
@@ -44,7 +48,14 @@ export const LayoutNew = () => {
     if (!appOpened) {
       return;
     }
+
+    var existingWallet = getCurrentAccount();
+    if (!existingWallet) {  
+      return;
+    }
     
+    setWalletIsAvailable(true);
+
     const restoreState = async () => {
       try {
         
@@ -81,6 +92,7 @@ export const LayoutNew = () => {
   };
 
     return (
+      
       <>      
         <View style={{zIndex: 100}}>
           <Toast />
@@ -103,117 +115,144 @@ export const LayoutNew = () => {
           </View>
           {
             netInfo.isConnected !== null ?
-              <NavigationContainer theme={theme} onReady={() => { setAppOpened(true); RNBootSplash.hide({ fade: true, duration: 500 }); }}
-              // initialState={initialState}
-              linking={linking}
-              onStateChange={(state) => console.log('New state is', state)}
-              fallback={<Text>Loading...</Text>}
-              /*linking={{
-                prefixes: ['wc://'],
-                config: {
-                  screens: {
-                    HomeScreen: 'Home',
+                <NavigationContainer theme={theme} onReady={() => { setAppOpened(true); RNBootSplash.hide({ fade: true, duration: 500 }); }}
+                // initialState={initialState}
+                linking={linking}
+                onStateChange={(state) => console.log('New state is', state)}
+                fallback={<Text>Loading...</Text>}
+                /*linking={{
+                  prefixes: ['wc://'],
+                  config: {
+                    screens: {
+                      HomeScreen: 'Home',
+                    },
                   },
-                },
-                subscribe(listener) { const initializeDeepLink = async () => {           
-                    if (url.current || !web3wallet || (url.current.indexOf("wc:") < 0 && url.current)) {
-                      console.log(url.current)
-                      return;
-                    }
+                  subscribe(listener) { const initializeDeepLink = async () => {           
+                      if (url.current || !web3wallet || (url.current.indexOf("wc:") < 0 && url.current)) {
+                        console.log(url.current)
+                        return;
+                      }
 
-                    const subscription = Linking.addEventListener("url", async (event) => {
-                      openDeepLink(event.url);
-                      url.current = event.url;
-                      // Linking.canOpenURL(event.url).then(async (supported) => {
-                      //     if (supported) {
-                      //       console.log(supported);
-                      //       console.log(event.url);
-                      //       // event.url = ""
-                      //       console.log("######################");
-                      //       // Object.values(web3wallet.getActiveSessions()).map(async (session: any) => console.log(await session.topic))
-                      //       var activeSessions = await web3wallet?.getActiveSessions();
-                            
-                      //       // console.log(activeSessions);
-                      //       console.log("######################");
-                      //       if (activeSessions) {
-                      //         Object.keys(activeSessions).map(async (topic: string) => {
-                      //           // console.log("JAA");
-                      //           console.log(topic);
-                                
-                      //           // await web3wallet.disconnectSession({
-                      //           //   topic: topic,
-                      //           //   reason: {code: 0,  message: "USER DISCONNECTED"},
-                      //           // });
-                      //         })
-                      //       }
-                            
-                      //       var splitUrl = event.url.split("@");
-                      //       var topic = "";
-                      //       if (splitUrl.length > 1)
-                      //       {
-                      //         topic = splitUrl[0].slice(3);
-                      //       }
-              
-                      //       var pairings = web3wallet.core.pairing.getPairings();
-                      //       pairings.map((pair) => {
-                      //         //web3wallet.core.pairing.disconnect({topic: pair.topic});
-                      //       })
-                      //       var existingPairing = pairings.find((pair) => {
-                      //         return pair.topic == topic;
-                      //       });
-              
-                      //       if (existingPairing == undefined) {
-                      //         // if (pairings.length == 0) {
-                      //           console.log("NEW PAIRING")
-                      //           console.log(topic)
-                      //           var pairing = await web3wallet.core.pairing.pair({ uri: event.url });
-                      //         // }              
-                      //       }
-                      //       else {
-                      //         console.log("ALREADY PAIRED")
-                      //         console.log(topic)
-                      //       }
-                      //     }
-                      // });
-                    });
-
-                    const getInitialURL = async () => {
-                      // Check if app was opened from a deep link
-                      
-                      const deepLink = await Linking.getInitialURL();            
-                      if (deepLink) {
-                        url.current = deepLink; 
-                        // dispatch({
-                        //   type: 'changeLoadingScreenVisibility',
-                        //   status: { loadingScreen: {visible: true, useBackgroundImage: true, opacity: 0.95} }
+                      const subscription = Linking.addEventListener("url", async (event) => {
+                        openDeepLink(event.url);
+                        url.current = event.url;
+                        // Linking.canOpenURL(event.url).then(async (supported) => {
+                        //     if (supported) {
+                        //       console.log(supported);
+                        //       console.log(event.url);
+                        //       // event.url = ""
+                        //       console.log("######################");
+                        //       // Object.values(web3wallet.getActiveSessions()).map(async (session: any) => console.log(await session.topic))
+                        //       var activeSessions = await web3wallet?.getActiveSessions();
+                              
+                        //       // console.log(activeSessions);
+                        //       console.log("######################");
+                        //       if (activeSessions) {
+                        //         Object.keys(activeSessions).map(async (topic: string) => {
+                        //           // console.log("JAA");
+                        //           console.log(topic);
+                                  
+                        //           // await web3wallet.disconnectSession({
+                        //           //   topic: topic,
+                        //           //   reason: {code: 0,  message: "USER DISCONNECTED"},
+                        //           // });
+                        //         })
+                        //       }
+                              
+                        //       var splitUrl = event.url.split("@");
+                        //       var topic = "";
+                        //       if (splitUrl.length > 1)
+                        //       {
+                        //         topic = splitUrl[0].slice(3);
+                        //       }
+                
+                        //       var pairings = web3wallet.core.pairing.getPairings();
+                        //       pairings.map((pair) => {
+                        //         //web3wallet.core.pairing.disconnect({topic: pair.topic});
+                        //       })
+                        //       var existingPairing = pairings.find((pair) => {
+                        //         return pair.topic == topic;
+                        //       });
+                
+                        //       if (existingPairing == undefined) {
+                        //         // if (pairings.length == 0) {
+                        //           console.log("NEW PAIRING")
+                        //           console.log(topic)
+                        //           var pairing = await web3wallet.core.pairing.pair({ uri: event.url });
+                        //         // }              
+                        //       }
+                        //       else {
+                        //         console.log("ALREADY PAIRED")
+                        //         console.log(topic)
+                        //       }
+                        //     }
                         // });
-                        openDeepLink(deepLink, true);                  
-                      } 
-                      // return () => {
-                      //   // Clean up the event listeners
-                      //   subscription.remove();
-                      // };     
-                    }
-                    await getInitialURL();
+                      });
 
-                  return () => {
-                    // Clean up the event listeners
-                    Linking.removeAllListeners("url");
-                    subscription.remove();
-                  };
+                      const getInitialURL = async () => {
+                        // Check if app was opened from a deep link
+                        
+                        const deepLink = await Linking.getInitialURL();            
+                        if (deepLink) {
+                          url.current = deepLink; 
+                          // dispatch({
+                          //   type: 'changeLoadingScreenVisibility',
+                          //   status: { loadingScreen: {visible: true, useBackgroundImage: true, opacity: 0.95} }
+                          // });
+                          openDeepLink(deepLink, true);                  
+                        } 
+                        // return () => {
+                        //   // Clean up the event listeners
+                        //   subscription.remove();
+                        // };     
+                      }
+                      await getInitialURL();
+
+                    return () => {
+                      // Clean up the event listeners
+                      Linking.removeAllListeners("url");
+                      subscription.remove();
+                    };
+                  }
+                  initializeDeepLink();
                 }
-                initializeDeepLink();
-              }
-            }}*/
+              }}*/
+                >
+              <Stack.Navigator
+              
+                  screenOptions={({ route }) => ({
+                    // headerShown: false,
+                    // headerMode: 'none',
+                    // navigationOptions: {
+                    //     headerVisible: false,
+                    // }
+                    headerTintColor: isDarkMode ? Colors.lighter : Colors.darker,
+                    headerStyle: {
+                      height: 80,
+                      paddingHorizontal: 5,
+                      paddingTop: 0,
+                      backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+                      borderTopWidth: 0,
+                      justifyContent: 'flex-start'
+                  },
+                    
+                  })
+                }
               >
-            <Stack.Navigator>                
-              <Stack.Screen name="Home" options={{title: "", headerStyle: {backgroundColor: Colors.darker}, headerTintColor: Colors.lighter}} component={HomeScreen} />
-              <Stack.Screen name="SeedGenerator"  options={{title: "", headerStyle: {backgroundColor: Colors.darker}, headerTintColor: Colors.lighter}} component={SeedGeneratorScreen} />
-              <Stack.Screen name="CreateAccount" options={{title: "", headerStyle: {backgroundColor: Colors.darker}, headerTintColor: Colors.lighter}} component={CreateAccountScreen} />
-              <Stack.Screen name="SuccessWalletCreated" options={{title: "", headerShown: false, headerStyle: {backgroundColor: Colors.darker}, headerTintColor: Colors.lighter}} component={SuccessWalletCreatedScreen} />
-              <Stack.Screen name="CreateTransaction" options={{title: "New Transaction", headerStyle: {backgroundColor: Colors.darker}, headerTintColor: Colors.lighter}} component={CreateTransactionScreen} />        
-            </Stack.Navigator>      
-          </NavigationContainer>
+                {
+                  !walletIsAvailable ?
+                  <Stack.Screen name="Welcome" options={{title: "", headerStyle: {backgroundColor: Colors.darker}, headerTintColor: Colors.lighter}} component={WelcomeScreen} />
+                  :
+                  <></>
+                }
+                <Stack.Screen name="Initial" options={{title: "", headerShown: false}} component={InitialScreen} />
+                <Stack.Screen name="SeedGenerator"  options={{title: ""}} component={SeedGeneratorScreen} />
+                <Stack.Screen name="CreateAccount" options={{title: ""}} component={CreateAccountScreen} />
+                <Stack.Screen name="SuccessWalletCreated" options={{title: "", headerShown: false }} component={SuccessWalletCreatedScreen} />
+                <Stack.Screen name="CreateTransaction" options={{title: "New Transaction" }} component={CreateTransactionScreen} />        
+              </Stack.Navigator>      
+            </NavigationContainer>
+            
       :
       <></>
     }
