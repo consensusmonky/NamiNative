@@ -5,63 +5,19 @@
  * @format
  */
 
-import * as encoding from 'text-encoding'
-import React, { useCallback, useContext, useEffect, useState } from 'react';
 import type {PropsWithChildren} from 'react';
-import { ThemeContext } from "@react-native-material/core";
-import { ErrorResponse, JsonRpcResponse } from "@walletconnect/jsonrpc-utils";
-import { IconButton } from 'react-native-paper';
-import { Buffer } from "buffer";
-
-import {
-  BackHandler,
-  Linking,
-  Platform,
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
-
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-import { SignClient } from '@walletconnect/sign-client';
-import { Core } from "@walletconnect/core";
-import { Web3Wallet } from "@walletconnect/web3wallet";
-import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { HomeScreen } from './src/screens/HomeScreen';
-import { ProfileScreen } from './src/screens/ProfileScreen';
-import { CreateAccountScreen } from './src/screens/CreateAccountScreen';
-import { Alert } from 'react-native/Libraries/Alert/Alert';
-import { SeedGeneratorScreen } from './src/screens/SeedGeneratorScreen';
-import { SuccessWalletCreatedScreen } from './src/screens/SuccessWalletCreatedScreen';
-import SimpleLottie from './src/components/Animation';
-import AvatarBox from './src/components/AvatarBox';
-import { StateContext, StateProvider, useStateValue } from './src/hooks/StateProvider';
-import { LayoutNew } from './src/screens/LayoutNew';
+import React, { useEffect, useState } from 'react';
+import { Platform,  useColorScheme } from 'react-native';
+import { makeStyles } from './style';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
+import { DefaultTheme } from '@react-navigation/native';
+import { StateProvider} from './src/hooks/StateProvider';
+import { LayoutContainer } from './src/screens/LayoutContainer';
 import { InitialStateReducer } from './src/hooks/reducers/InitialStateReducer';
 import { AccountInfoReducer } from './src/hooks/reducers/AccountInfoReducer';
-import BackgroundFetch from 'react-native-background-fetch';
 import PushNotification, { Importance } from 'react-native-push-notification';
-import { makeStyles } from './style';
-import useInitialization, { web3wallet } from './src/utils/Web3WalletClient';
-import { SignClientTypes, SessionTypes } from "@walletconnect/types";
-import PairingModal from './src/screens/PairingModal/PairingModal';
-import { getCurrentAccount, getNetwork, getUtxos } from './src/services/NetworkDataProviderService';
-import { Address, hash_transaction, Transaction, TransactionBody, TransactionUnspentOutput, TransactionWitnessSet } from '@emurgo/react-native-haskell-shelley';
-import { APIError, ERROR, NETWORK_ID, TxSendError } from './src/config/config';
-import { blockfrostRequest } from './src/utils/ApiExtensions';
-import { signTx } from './src/utils/Ledger';
-import SigningModal from './src/screens/SigningModal/SigningModal';
+import { getCurrentAccount, getNetwork, getUtxos } from './src/services/ApiConnectorService';
+
 // import { AuthClient } from "@walletconnect/auth-client";
 
 type SectionProps = PropsWithChildren<{
@@ -260,7 +216,7 @@ const mainReducer = ({ initialLoadingReducer, accountInfoReducer  }: any, action
     */
     <>    
     <StateProvider initialState={initialState} reducer={mainReducer} >
-      <LayoutNew />
+      <LayoutContainer />
     </StateProvider>
     </>
   );

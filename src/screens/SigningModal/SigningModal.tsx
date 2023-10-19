@@ -1,16 +1,16 @@
 import { Alert, BackHandler, Button, Image, Modal, StyleSheet, Text, View, useColorScheme } from "react-native";
 import { SignClientTypes } from "@walletconnect/types";
 import { Address, Transaction, TransactionBody, TransactionWitnessSet, hash_transaction } from "@emurgo/react-native-haskell-shelley";
-import { signTx } from "../../utils/Ledger";
-import { getCurrentAccount, getNetwork } from "../../services/NetworkDataProviderService";
+import { getCurrentAccount, getNetwork } from "../../services/ApiConnectorService";
 import { ErrorResponse, JsonRpcResponse, JsonRpcError, formatJsonRpcResult, formatJsonRpcError } from "@walletconnect/jsonrpc-utils";
-import { web3wallet } from "../../utils/Web3WalletClient";
+import { web3wallet } from "../../services/Web3WalletClientService";
 import { Buffer } from "buffer";
 import { Ref, forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { getSdkError } from "@walletconnect/utils";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 import React from "react";
 import { useStateValue } from "../../hooks/StateProvider";
+import { signTx } from "../../utils/WalletUtils";
 
 interface SigningModalProps {
   visible: boolean;

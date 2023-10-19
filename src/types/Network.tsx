@@ -1,5 +1,4 @@
-import { NetworkId } from "@emurgo/react-native-haskell-shelley";
-import { NETWORK_ID } from "../config/config";
+import { NETWORK_ID } from "../constants/Common";
 
 export type Unit = string | "lovelace";
 export type Asset = {
@@ -66,6 +65,10 @@ export type AccountInfo = {
     stakeKeyHash: string;
     name: string;
     avatar: string;    
+} & NetworkOptions
+
+export type WalletInfo = {
+    currentNetwork: AccountInfo[];
 } & NetworkOptions
 
 // export type Account = NetworkDefaultStats;

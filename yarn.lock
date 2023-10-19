@@ -2620,6 +2620,14 @@
   dependencies:
     nanoid "^3.1.23"
 
+"@shopify/react-native-skia@*", "@shopify/react-native-skia@^0.1.212":
+  version "0.1.212"
+  resolved "https://registry.npmjs.org/@shopify/react-native-skia/-/react-native-skia-0.1.212.tgz"
+  integrity sha512-qc9Jh7kp82FSfxz7O+kCeK0OzQ/VZGRK8qKslSiWKwoZ45cXYdByz5nfwUodzoAwnQgGkhuREwcEHC07e4bZvg==
+  dependencies:
+    canvaskit-wasm "0.38.2"
+    react-reconciler "^0.27.0"
+
 "@sideway/address@^4.1.3":
   version "4.1.4"
   resolved "https://registry.npmjs.org/@sideway/address/-/address-4.1.4.tgz"
@@ -3029,6 +3037,21 @@
   version "8.1.1"
   resolved "https://registry.npmjs.org/@types/react-native-push-notification/-/react-native-push-notification-8.1.1.tgz"
   integrity sha512-ZN4UbU4EM3C7XGt4zI6RqHEZS2+35EwOz9DPAD1lTTY3IpWMHAKYjryykvP35hFkSwrGMpT8nYuMFPEJRwDEJA==
+
+"@types/react-native-vector-icons@^6.4.6":
+  version "6.4.16"
+  resolved "https://registry.npmjs.org/@types/react-native-vector-icons/-/react-native-vector-icons-6.4.16.tgz"
+  integrity sha512-27p1tItacE/0yYKCs+nmGxtO5hiA9nhUSg9W+ipnq9PFS1NMQ+Cjf6Y+tFQgE4u0wF412xkgA40MIGLuocgqCg==
+  dependencies:
+    "@types/react" "*"
+    "@types/react-native" "^0.70"
+
+"@types/react-native@^0.70":
+  version "0.70.16"
+  resolved "https://registry.npmjs.org/@types/react-native/-/react-native-0.70.16.tgz"
+  integrity sha512-zHPWfszSWTctG1O1gsAHTQzOC33GY7Iv/Mk44tSMkcHiUtqB1GjOZz1VLqSyxW3Qw77HX4GUHi8b1ksOFrq2KQ==
+  dependencies:
+    "@types/react" "*"
 
 "@types/react-test-renderer@^18.0.0":
   version "18.0.0"
@@ -4123,6 +4146,11 @@ caniuse-lite@^1.0.30001503:
   version "1.0.30001512"
   resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001512.tgz"
   integrity sha512-2S9nK0G/mE+jasCUsMPlARhRCts1ebcp2Ji8Y8PWi4NDE1iRdLCnEPHkEfeBrGC45L4isBx5ur3IQ6yTE2mRZw==
+
+canvaskit-wasm@0.38.2:
+  version "0.38.2"
+  resolved "https://registry.npmjs.org/canvaskit-wasm/-/canvaskit-wasm-0.38.2.tgz"
+  integrity sha512-ieRb6DO4yL91qUfyRgmyhp2Hi1KmQ9lIMfKacxHVlfp/CpKCkzgAxRGUbCsJFzwLKjs9fufGrIyvnzEYRwm1XQ==
 
 chalk@^2.4.2:
   version "2.4.2"
@@ -5956,7 +5984,7 @@ hoist-non-react-statics@^2.3.1:
   resolved "https://registry.npmjs.org/hoist-non-react-statics/-/hoist-non-react-statics-2.5.5.tgz"
   integrity sha512-rqcy4pJo55FTTLWt+bU8ukscqHeE/e9KWvsOW2b/a3afxQZhwkQdT1rPPCJ0rYXdj4vNcasY8zHTH+jF/qStxw==
 
-hoist-non-react-statics@^3.3.0:
+hoist-non-react-statics@^3.3.0, hoist-non-react-statics@^3.3.2:
   version "3.3.2"
   resolved "https://registry.npmjs.org/hoist-non-react-statics/-/hoist-non-react-statics-3.3.2.tgz"
   integrity sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==
@@ -7106,7 +7134,7 @@ lodash.throttle@^4.1.1:
   resolved "https://registry.npmjs.org/lodash.throttle/-/lodash.throttle-4.1.1.tgz"
   integrity sha512-wIkUCfVKpVsWo3JSZlc+8MB5it+2AN5W8J7YVMST30UrvcQNZ1Okbj+rbVniijTWE6FGYy4XJq/rHkas8qJMLQ==
 
-lodash@^4.17.13, lodash@^4.17.21:
+lodash@^4.17.13, lodash@^4.17.15, lodash@^4.17.21:
   version "4.17.21"
   resolved "https://registry.npmjs.org/lodash/-/lodash-4.17.21.tgz"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
@@ -8065,6 +8093,11 @@ open@^7.4.2:
     is-docker "^2.0.0"
     is-wsl "^2.1.1"
 
+opencollective-postinstall@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.npmjs.org/opencollective-postinstall/-/opencollective-postinstall-2.0.3.tgz"
+  integrity sha512-8AV/sCtuzUeTo8gQK5qDZzARrulB3egtLzFgteqB2tcT4Mw7B8Kt7JcDHmltjz6FOAHsvTevk70gZEbhM4ZS9Q==
+
 optionator@^0.9.3:
   version "0.9.3"
   resolved "https://registry.npmjs.org/optionator/-/optionator-0.9.3.tgz"
@@ -8576,6 +8609,13 @@ react-lifecycles-compat@^3.0.2:
   resolved "https://registry.npmjs.org/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz"
   integrity sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==
 
+react-native-animatable@1.3.3:
+  version "1.3.3"
+  resolved "https://registry.npmjs.org/react-native-animatable/-/react-native-animatable-1.3.3.tgz"
+  integrity sha512-2ckIxZQAsvWn25Ho+DK3d1mXIgj7tITkrS4pYDvx96WyOttSvzzFeQnM2od0+FUMzILbdHDsDEqZvnz1DYNQ1w==
+  dependencies:
+    prop-types "^15.7.2"
+
 react-native-autocomplete-dropdown@^2.1.0:
   version "2.1.1"
   resolved "https://registry.npmjs.org/react-native-autocomplete-dropdown/-/react-native-autocomplete-dropdown-2.1.1.tgz"
@@ -8648,6 +8688,20 @@ react-native-elastic-view@^0.0.2:
   resolved "https://registry.npmjs.org/react-native-elastic-view/-/react-native-elastic-view-0.0.2.tgz"
   integrity sha512-p8NHWAsSTj4eXOedl4QOqVp0BzDMjDIAINElUpG1aVtlocwmgsE4n90gufOB0ADOEu/lNg9ZufvGInbq/cRRUQ==
 
+react-native-elements@^3.4.3:
+  version "3.4.3"
+  resolved "https://registry.npmjs.org/react-native-elements/-/react-native-elements-3.4.3.tgz"
+  integrity sha512-VtZc25EecPZyUBER85zFK9ZbY6kkUdcm1ZwJ9hdoGSCr1R/GFgxor4jngOcSYeMvQ+qimd5No44OVJW3rSJECA==
+  dependencies:
+    "@types/react-native-vector-icons" "^6.4.6"
+    color "^3.1.2"
+    deepmerge "^4.2.2"
+    hoist-non-react-statics "^3.3.2"
+    lodash.isequal "^4.5.0"
+    opencollective-postinstall "^2.0.3"
+    react-native-ratings "8.0.4"
+    react-native-size-matters "^0.3.1"
+
 react-native-fast-crypto@^2.2.0:
   version "2.2.0"
   resolved "https://registry.npmjs.org/react-native-fast-crypto/-/react-native-fast-crypto-2.2.0.tgz"
@@ -8655,6 +8709,11 @@ react-native-fast-crypto@^2.2.0:
   dependencies:
     buffer "^5.0.8"
     rfc4648 "^1.0.0"
+
+react-native-fiesta@^0.5.1:
+  version "0.5.1"
+  resolved "https://registry.npmjs.org/react-native-fiesta/-/react-native-fiesta-0.5.1.tgz"
+  integrity sha512-712wQsBJaj9UAeXqnDcFzWnl5Xu7TzWoZLLquh5WQxdZUeKXC3KTx06xTxXYtgs9RKMkV8d60eJvtWXqQn6wPQ==
 
 react-native-flex-layout@^0.1.5:
   version "0.1.5"
@@ -8694,6 +8753,14 @@ react-native-mmkv-storage@^0.9.1:
   resolved "https://registry.npmjs.org/react-native-mmkv-storage/-/react-native-mmkv-storage-0.9.1.tgz"
   integrity sha512-FzSx4PKxK2ocT/OuKGlaVziWZyQYHYLUx9595i1oXY263C5mG19PN5RiBgEGL2S5lK4VGUCzO85GAcsrNPtpOg==
 
+react-native-modal@^13.0.1:
+  version "13.0.1"
+  resolved "https://registry.npmjs.org/react-native-modal/-/react-native-modal-13.0.1.tgz"
+  integrity sha512-UB+mjmUtf+miaG/sDhOikRfBOv0gJdBU2ZE1HtFWp6UixW9jCk/bhGdHUgmZljbPpp0RaO/6YiMmQSSK3kkMaw==
+  dependencies:
+    prop-types "^15.6.2"
+    react-native-animatable "1.3.3"
+
 react-native-paper@^5.4.1:
   version "5.9.1"
   resolved "https://registry.npmjs.org/react-native-paper/-/react-native-paper-5.9.1.tgz"
@@ -8730,7 +8797,14 @@ react-native-qrcode-styled@^0.2.1:
   dependencies:
     qrcode "^1.5.1"
 
-react-native-reanimated@^3.0.2, react-native-reanimated@~2.3.1:
+react-native-ratings@8.0.4:
+  version "8.0.4"
+  resolved "https://registry.npmjs.org/react-native-ratings/-/react-native-ratings-8.0.4.tgz"
+  integrity sha512-Xczu5lskIIRD6BEdz9A0jDRpEck/SFxRqiglkXi0u67yAtI1/pcJC76P4MukCbT8K4BPVl+42w83YqXBoBRl7A==
+  dependencies:
+    lodash "^4.17.15"
+
+react-native-reanimated@^3.0.2, react-native-reanimated@>=2.0.0, react-native-reanimated@~2.3.1:
   version "3.3.0"
   resolved "https://registry.npmjs.org/react-native-reanimated/-/react-native-reanimated-3.3.0.tgz"
   integrity sha512-LzfpPZ1qXBGy5BcUHqw3pBC0qSd22qXS3t8hWSbozXNrBkzMhhOrcILE/nEg/PHpNNp1xvGOW8NwpAMF006roQ==
@@ -8771,6 +8845,11 @@ react-native-securerandom@^1.0.0, react-native-securerandom@^1.0.1:
   integrity sha512-ibuDnd3xi17HyD5CkilOXGPFpS9Z1oifjyHFwUl8NMzcQcpruM0ZX8ytr3A4rCeAsaBHjz69r78Xgd6vUswv1Q==
   dependencies:
     base64-js "*"
+
+react-native-size-matters@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.npmjs.org/react-native-size-matters/-/react-native-size-matters-0.3.1.tgz"
+  integrity sha512-mKOfBLIBFBcs9br1rlZDvxD5+mAl8Gfr5CounwJtxI6Z82rGrMO+Kgl9EIg3RMVf3G855a85YVqHJL2f5EDRlw==
 
 react-native-size-matters@^0.4.0:
   version "0.4.0"
@@ -8822,15 +8901,15 @@ react-native-unimodules@^0.14.10:
     unimodules-app-loader "~2.2.0"
     unimodules-task-manager-interface "~6.2.0"
 
-react-native-vector-icons@*, react-native-vector-icons@>=7.0.0:
-  version "9.2.0"
-  resolved "https://registry.npmjs.org/react-native-vector-icons/-/react-native-vector-icons-9.2.0.tgz"
-  integrity sha512-wKYLaFuQST/chH3AJRjmOLoLy3JEs1JR6zMNgTaemFpNoXs0ztRnTxcxFD9xhX7cJe1/zoN5BpQYe7kL0m5yyA==
+react-native-vector-icons@*, react-native-vector-icons@^10.0.0, react-native-vector-icons@>=7.0.0, react-native-vector-icons@>7.0.0:
+  version "10.0.0"
+  resolved "https://registry.npmjs.org/react-native-vector-icons/-/react-native-vector-icons-10.0.0.tgz"
+  integrity sha512-efMOVbZIebY8RszZPzPBoXi9pvD/NFYmjIDYxRoc9LYSzV8rMJtT8FfcO2hPu85Rn2x9xktha0+qn0B7EqMAcQ==
   dependencies:
     prop-types "^15.7.2"
     yargs "^16.1.1"
 
-react-native@*, "react-native@^0.0.0-0 || 0.60 - 0.71 || 1000.0.0", react-native@>=0.33, react-native@>=0.40.0, react-native@>=0.46, react-native@>=0.47.0, "react-native@>=0.47.0 <1.0.0", react-native@>=0.50.0, react-native@>=0.56, react-native@>=0.57.0, react-native@>=0.58.4, react-native@>=0.59, react-native@>=0.59.0, react-native@>=0.60.0, react-native@>=0.65.0, "react-native@>=0.67.5 <1.0.x", react-native@>0.54, react-native@0.71.4:
+react-native@*, "react-native@^0.0.0-0 || 0.60 - 0.71 || 1000.0.0", react-native@>=0.33, react-native@>=0.40.0, react-native@>=0.46, react-native@>=0.47.0, "react-native@>=0.47.0 <1.0.0", react-native@>=0.50.0, react-native@>=0.56, react-native@>=0.57.0, react-native@>=0.58.4, react-native@>=0.59, react-native@>=0.59.0, react-native@>=0.60.0, react-native@>=0.64, react-native@>=0.65.0, "react-native@>=0.67.5 <1.0.x", react-native@>0.54, react-native@0.71.4:
   version "0.71.4"
   resolved "https://registry.npmjs.org/react-native/-/react-native-0.71.4.tgz"
   integrity sha512-3hSYqvWrOdKhpV3HpEKp1/CkWx8Sr/N/miCrmUIAsVTSJUR7JW0VvIsrV9urDhUj/s6v2WF4n7qIEEJsmTCrPw==
@@ -8877,6 +8956,14 @@ react-number-format@^5.1.4:
   dependencies:
     prop-types "^15.7.2"
 
+react-reconciler@^0.27.0:
+  version "0.27.0"
+  resolved "https://registry.npmjs.org/react-reconciler/-/react-reconciler-0.27.0.tgz"
+  integrity sha512-HmMDKciQjYmBRGuuhIaKA1ba/7a+UsM5FzOZsMO2JYHt9Jh8reCb7j1eDC95NOyUlKM9KRyvdx0flBuDvYSBoA==
+  dependencies:
+    loose-envify "^1.1.0"
+    scheduler "^0.21.0"
+
 react-refresh@^0.4.0:
   version "0.4.3"
   resolved "https://registry.npmjs.org/react-refresh/-/react-refresh-0.4.3.tgz"
@@ -8899,7 +8986,7 @@ react-test-renderer@18.2.0:
     react-shallow-renderer "^16.15.0"
     scheduler "^0.23.0"
 
-react@*, "react@^0.14 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0", "react@^0.14.0 || ^15.0.0 || ^16.0.0", "react@^16.0.0 || ^17.0.0 || ^18.0.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0", react@^17.0.2, react@^18.2.0, "react@>= 16.8.0", react@>=16.0, react@>=16.0.0, react@>=16.2, react@>=16.3.0, react@>=16.6.3, react@>=16.8, react@>=16.8.6, react@>=17.0.0, "react@15.3.0 - 18.x", react@18.2.0:
+react@*, "react@^0.14 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0", "react@^0.14.0 || ^15.0.0 || ^16.0.0", "react@^16.0.0 || ^17.0.0 || ^18.0.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0", react@^17.0.2, react@^18.0.0, react@^18.2.0, "react@>= 16.8.0", react@>=16.0, react@>=16.0.0, react@>=16.2, react@>=16.3.0, react@>=16.6.3, react@>=16.8, react@>=16.8.6, react@>=17.0.0, react@>=18.0, "react@15.3.0 - 18.x", react@18.2.0:
   version "18.2.0"
   resolved "https://registry.npmjs.org/react/-/react-18.2.0.tgz"
   integrity sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==
@@ -9226,6 +9313,13 @@ sax@>=0.6.0:
   version "1.2.4"
   resolved "https://registry.npmjs.org/sax/-/sax-1.2.4.tgz"
   integrity sha512-NqVDv9TpANUjFm0N8uM5GxL36UgKi9/atZw+x7YFnQ8ckwFGKrl4xX4yWtrey3UJm5nP1kUbnYgLopqWNSRhWw==
+
+scheduler@^0.21.0:
+  version "0.21.0"
+  resolved "https://registry.npmjs.org/scheduler/-/scheduler-0.21.0.tgz"
+  integrity sha512-1r87x5fz9MXqswA2ERLo0EbOAU74DpIUO090gIasYTqlVoJeMcl+Z1Rg7WHz+qtPujhS/hGIt9kxZOYBV3faRQ==
+  dependencies:
+    loose-envify "^1.1.0"
 
 scheduler@^0.23.0:
   version "0.23.0"

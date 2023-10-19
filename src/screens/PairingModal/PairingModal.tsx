@@ -3,8 +3,6 @@ import { SignClientTypes } from "@walletconnect/types";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 import React from "react";
 
-
-
 interface PairingModalProps {
   visible: boolean;
   setModalVisible: (arg1: boolean) => void;
